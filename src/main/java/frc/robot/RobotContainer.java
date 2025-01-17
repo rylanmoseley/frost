@@ -9,7 +9,9 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.utilities.CommandOperatorController;
+import java.util.function.DoubleSupplier;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -19,6 +21,7 @@ import frc.robot.utilities.CommandOperatorController;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
+  private ArmSubsystem m_armSubsystem = new ArmSubsystem();
 
   private final CommandXboxController m_driverController =
       new CommandXboxController(OperatorConstants.kDriverControllerPort);
@@ -31,6 +34,10 @@ public class RobotContainer {
     // Configure the trigger bindings
     configureBindings();
   }
+
+  /** Accumulates the active simulation current draw of all subsystems/mechanisms */
+  public final DoubleSupplier totalRobotSimulationCurrentDraw =
+      () -> m_armSubsystem.simulationCurrentDraw.getAsDouble();
 
   /**
    * Use this method to define your trigger->command mappings. Triggers can be created via the
