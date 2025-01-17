@@ -9,7 +9,9 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.Arm.ArmSubsystem;
+import frc.robot.subsystems.LEDSubsystem;
+import frc.robot.subsystems.Swerve.SwerveSubsystem;
 import frc.robot.utilities.CommandOperatorController;
 import java.util.function.DoubleSupplier;
 
@@ -22,6 +24,8 @@ import java.util.function.DoubleSupplier;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private ArmSubsystem m_armSubsystem = new ArmSubsystem();
+  private SwerveSubsystem m_swerveSubsystem = new SwerveSubsystem();
+  private LEDSubsystem m_LEDSubsystem = new LEDSubsystem();
 
   private final CommandXboxController m_driverController =
       new CommandXboxController(OperatorConstants.kDriverControllerPort);
@@ -37,7 +41,10 @@ public class RobotContainer {
 
   /** Accumulates the active simulation current draw of all subsystems/mechanisms */
   public final DoubleSupplier totalRobotSimulationCurrentDraw =
-      () -> m_armSubsystem.simulationCurrentDraw.getAsDouble();
+      () ->
+          m_armSubsystem.simulationCurrentDraw.getAsDouble()
+              + m_swerveSubsystem.simulationCurrentDraw.getAsDouble()
+              + m_LEDSubsystem.simulationCurrentDraw.getAsDouble();
 
   /**
    * Use this method to define your trigger->command mappings. Triggers can be created via the
