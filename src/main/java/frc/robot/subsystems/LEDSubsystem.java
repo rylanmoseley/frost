@@ -5,5 +5,5 @@ import java.util.function.DoubleSupplier;
 
 public class LEDSubsystem extends SubsystemBase {
 
-  public final DoubleSupplier simulationCurrentDraw = () -> 0;
+  public final DoubleSupplier totalCurrentDraw = () -> 0;
 }

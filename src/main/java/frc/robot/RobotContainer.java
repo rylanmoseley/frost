@@ -39,12 +39,12 @@ public class RobotContainer {
     configureBindings();
   }
 
-  /** Accumulates the active simulation current draw of all subsystems/mechanisms */
-  public final DoubleSupplier totalRobotSimulationCurrentDraw =
+  /** Accumulates the active current draw of all subsystems/mechanisms */
+  public final DoubleSupplier totalRobotCurrentDraw =
       () ->
-          m_armSubsystem.simulationCurrentDraw.getAsDouble()
-              + m_swerveSubsystem.simulationCurrentDraw.getAsDouble()
-              + m_LEDSubsystem.simulationCurrentDraw.getAsDouble();
+          m_armSubsystem.totalCurrentDraw.getAsDouble()
+              + m_swerveSubsystem.totalCurrentDraw.getAsDouble()
+              + m_LEDSubsystem.totalCurrentDraw.getAsDouble();
 
   /**
    * Use this method to define your trigger->command mappings. Triggers can be created via the
