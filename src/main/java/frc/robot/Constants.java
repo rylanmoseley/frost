@@ -22,9 +22,7 @@ public final class Constants {
 
   public static class ArmConstants {
 
-
     public static class ClawConstants {
-
 
       public static final Value clawOpen = Value.kForward;
       public static final Value clawClosed = Value.kReverse;

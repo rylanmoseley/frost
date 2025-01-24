@@ -14,7 +14,6 @@ import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ArmConstants.ClawConstants;
-
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
@@ -55,9 +54,10 @@ public class Claw extends SubsystemBase {
   }
 
   public Command prepareForCubeCommand() {
-    return this.run(() -> {
-      m_clamp.set(ClawConstants.clawOpen);
-    })
+    return this.run(
+            () -> {
+              m_clamp.set(ClawConstants.clawOpen);
+            })
         .withName("Prepare for Cube")
         .withInterruptBehavior(InterruptionBehavior.kCancelSelf);
   }
@@ -105,7 +105,7 @@ public class Claw extends SubsystemBase {
   }
 
   @Override
-  public void periodic () {
+  public void periodic() {
     // TODO update dashboard/NT
   }
 }
