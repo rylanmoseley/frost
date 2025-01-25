@@ -56,7 +56,7 @@ public final class Constants {
       public static final Value CLAW_OPEN = Value.kForward;
       public static final Value CLAW_CLOSED = Value.kReverse;
 
-      public class RollerSpeeds {
+      public static class RollerSpeeds {
         public static final double CONE_IDLE = 0;
         public static final double CONE_INTAKE = 0;
         public static final double CONE_EJECT = 0;
@@ -64,6 +64,15 @@ public final class Constants {
         public static final double CUBE_IDLE = 0;
         public static final double CUBE_INTAKE = 0;
         public static final double CUBE_EJECT = 0;
+      }
+
+      public static class SimulationConstants {
+        public static final double GEAR_RATIO = 1;
+        public static final double MOI = 1;
+
+        public static final double COMPRESSOR_ON_CURRENT = 0;
+        public static final double PRESSURE_INCREMENT = 0.1;
+        public static final double PRESSURE_PISTON_DROP = 5;
       }
     }
   }

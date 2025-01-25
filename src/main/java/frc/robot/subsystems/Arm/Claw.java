@@ -1,21 +1,32 @@
 package frc.robot.subsystems.Arm;
 
 import com.revrobotics.REVLibError;
+import com.revrobotics.sim.SparkMaxSim;
 import com.revrobotics.spark.SparkAbsoluteEncoder;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.networktables.NetworkTableType;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticHub;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.simulation.DCMotorSim;
+import edu.wpi.first.wpilibj.simulation.DIOSim;
+import edu.wpi.first.wpilibj.simulation.DoubleSolenoidSim;
+import edu.wpi.first.wpilibj.simulation.PneumaticsBaseSim;
+import edu.wpi.first.wpilibj.simulation.RoboRioSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Robot;
 import frc.robot.Constants.ArmConstants.ClawConstants;
 import frc.robot.Constants.ArmConstants.ClawConstants.RollerSpeeds;
 import frc.robot.utilities.Telemetry;
@@ -56,7 +67,40 @@ public class Claw extends SubsystemBase {
               + m_pneumaticHub.getCompressorCurrent()
               + m_pneumaticHub.getSolenoidsTotalCurrent();
 
-  // TODO simulation setup
+  // simulation variables
+  private final DCMotor m_rollerMotorModel = DCMotor.getNeo550(1);
+  private DCMotorSim m_rollerLeftMotorSim =
+      new DCMotorSim(
+          LinearSystemId.createDCMotorSystem(
+              m_rollerMotorModel,
+              ClawConstants.SimulationConstants.MOI,
+              ClawConstants.SimulationConstants.GEAR_RATIO),
+          m_rollerMotorModel,
+          0.01,
+          0.01);
+  private DCMotorSim m_rollerRightMotorSim =
+      new DCMotorSim(
+          LinearSystemId.createDCMotorSystem(
+              m_rollerMotorModel,
+              ClawConstants.SimulationConstants.MOI,
+              ClawConstants.SimulationConstants.GEAR_RATIO),
+          m_rollerMotorModel,
+          0.01,
+          0.01);
+  private SparkMaxSim m_rollerLeftSim = new SparkMaxSim(m_rollerLeft, m_rollerMotorModel);
+  private SparkMaxSim m_rollerRightSim = new SparkMaxSim(m_rollerRight, m_rollerMotorModel);
+  private DoubleSolenoidSim m_clampSim =
+      new DoubleSolenoidSim(
+          ClawConstants.CAN.PNEUMATIC_HUB,
+          PneumaticsModuleType.REVPH,
+          ClawConstants.PNEUMATIC_CHANNEL.CLAMP_FORWARD,
+          ClawConstants.PNEUMATIC_CHANNEL.CLAMP_REVERSE);
+  private PneumaticsBaseSim m_pneumaticHubSim = m_clampSim.getModuleSim();
+  private double m_simulatedPressure = 0;
+  private Value m_clampLastState = Value.kOff;
+
+  @SuppressWarnings("unused") // yes we want it be quiet linter
+  private DIOSim m_beamBreakSim = new DIOSim(ClawConstants.DIO.BEAM_BREAK);
 
   public Claw() {
     System.out.println("Claw instantiated");
@@ -87,6 +131,10 @@ public class Claw extends SubsystemBase {
     Telemetry.setValue("Arm/Claw/Roller/RightVelocityRPM", NetworkTableType.kDouble);
 
     Telemetry.addValue("Arm/Claw/TotalCurrentDraw", NetworkTableType.kDouble);
+
+    if (Robot.isSimulation()) {
+      Telemetry.addValue("Arm/Claw/Simulation/Pressure", NetworkTableType.kDouble);
+    }
   }
 
   public REVLibError configureAll(
@@ -281,6 +329,49 @@ public class Claw extends SubsystemBase {
 
   @Override
   public void simulationPeriodic() {
-    // TODO update simulation
+    Telemetry.setValue("Arm/Claw/Simulation/Pressure", m_simulatedPressure);
+
+    // In this method, we update our simulation of what our arm is doing
+    // First, we set our "inputs" (voltages)
+    m_rollerLeftMotorSim.setInput(m_rollerLeft.getAppliedOutput() * RoboRioSim.getVInVoltage());
+    m_rollerRightMotorSim.setInput(m_rollerRight.getAppliedOutput() * RoboRioSim.getVInVoltage());
+
+    // Next, we update it. The standard loop time is 20ms.
+    m_rollerLeftMotorSim.update(0.02);
+    m_rollerRightMotorSim.update(0.02);
+
+    // Now, we update the Spark Flex
+    m_rollerLeftSim.iterate(
+        m_rollerLeftMotorSim.getAngularVelocityRPM(),
+        RoboRioSim.getVInVoltage(), // Simulated battery voltage, in Volts
+        0.02); // Time interval, in Seconds
+    m_rollerRightSim.iterate(
+        m_rollerRightMotorSim.getAngularVelocityRPM(),
+        RoboRioSim.getVInVoltage(), // Simulated battery voltage, in Volts
+        0.02); // Time interval, in Seconds
+
+    if (m_simulatedPressure < 120) {
+      m_pneumaticHubSim.setPressureSwitch(true);
+    } else {
+      m_pneumaticHubSim.setPressureSwitch(false);
+    }
+
+    if (m_pneumaticHub.getPressureSwitch()) {
+      m_pneumaticHubSim.setCompressorOn(true);
+      m_pneumaticHubSim.setCompressorCurrent(
+          ClawConstants.SimulationConstants.COMPRESSOR_ON_CURRENT);
+    } else {
+      m_pneumaticHubSim.setCompressorOn(false);
+      m_pneumaticHubSim.setCompressorCurrent(0);
+    }
+
+    if (m_pneumaticHub.getCompressor()) {
+      m_simulatedPressure += ClawConstants.SimulationConstants.PRESSURE_INCREMENT;
+    }
+
+    if (m_clamp.get() != m_clampLastState) {
+      m_simulatedPressure -= ClawConstants.SimulationConstants.PRESSURE_PISTON_DROP;
+      m_clampLastState = m_clamp.get();
+    }
   }
 }
