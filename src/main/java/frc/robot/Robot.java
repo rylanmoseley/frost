@@ -103,6 +103,6 @@ public class Robot extends TimedRobot {
     // SimBattery estimates loaded battery voltages
     RoboRioSim.setVInVoltage(
         BatterySim.calculateDefaultBatteryLoadedVoltage(
-            m_robotContainer.totalRobotSimulationCurrentDraw.getAsDouble()));
+            m_robotContainer.totalRobotCurrentDraw.getAsDouble()));
   }
 }
