@@ -20,6 +20,10 @@ public final class Constants {
     public static final int kOperatorControllerPort = 1;
   }
 
+  public static class TelemetryConstants {
+    public static final String ROOT_NAME = "telemetry";
+  }
+
   public static class ArmConstants {
     public enum Mode {
       CUBE,
