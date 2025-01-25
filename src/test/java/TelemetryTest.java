@@ -11,7 +11,6 @@ class TelemetryTest {
   @BeforeEach // this method will run before each test
   void setup() {
     assert HAL.initialize(500, 0); // initialize the HAL, crash if failed
-    Telemetry.startSimulationServer();
   }
 
   @Test // marks this method as a test
