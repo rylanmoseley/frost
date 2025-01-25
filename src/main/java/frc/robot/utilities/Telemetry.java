@@ -1,13 +1,13 @@
 // Rylan 2025
 
 /*
- * 
+ *
  * NT4 Made Easy
- * 
+ *
  * This is great for simple telemetry, where all you need is to add, set, and get values
  * It's basically NT3 but on NT4
- * 
-*/
+ *
+ */
 
 package frc.robot.utilities;
 
@@ -423,124 +423,122 @@ public class Telemetry {
     }
   }
 
-    public static long[] getValue(String name, long[] defaultValue) {
-        Telemetry table = getTelemetry();
-    
-        if (!table.entries.containsKey(name)) {
-        DriverStation.reportWarning(
-            "Telemetry: entry " + name + " does not exist, creating with type int[]", false);
-        System.out.println(
-            "Telemetry: entry " + name + " does not exist, creating with type int[]");
-        addValue(name, NetworkTableType.kIntegerArray);
-        }
-    
-        TelemetryItem item = table.entries.get(name);
-        if (item.type == NetworkTableType.kIntegerArray) {
-        return ((IntegerArraySubscriber) item.subscriber).get(defaultValue);
-        } else {
-        DriverStation.reportWarning(
-            "Telemetry: type mismatch during get "
-                + name
-                + ": expected int[], got "
-                + item.type.getValueStr(),
-            false);
-        return defaultValue;
-        }
+  public static long[] getValue(String name, long[] defaultValue) {
+    Telemetry table = getTelemetry();
+
+    if (!table.entries.containsKey(name)) {
+      DriverStation.reportWarning(
+          "Telemetry: entry " + name + " does not exist, creating with type int[]", false);
+      System.out.println("Telemetry: entry " + name + " does not exist, creating with type int[]");
+      addValue(name, NetworkTableType.kIntegerArray);
     }
 
-    public static String getValue(String name, String defaultValue) {
-        Telemetry table = getTelemetry();
-    
-        if (!table.entries.containsKey(name)) {
-        DriverStation.reportWarning(
-            "Telemetry: entry " + name + " does not exist, creating with type String", false);
-        System.out.println("Telemetry: entry " + name + " does not exist, creating with type String");
-        addValue(name, NetworkTableType.kString);
-        }
-    
-        TelemetryItem item = table.entries.get(name);
-        if (item.type == NetworkTableType.kString) {
-        return ((StringSubscriber) item.subscriber).get(defaultValue);
-        } else {
-        DriverStation.reportWarning(
-            "Telemetry: type mismatch during get "
-                + name
-                + ": expected String, got "
-                + item.type.getValueStr(),
-            false);
-        return defaultValue;
-        }
+    TelemetryItem item = table.entries.get(name);
+    if (item.type == NetworkTableType.kIntegerArray) {
+      return ((IntegerArraySubscriber) item.subscriber).get(defaultValue);
+    } else {
+      DriverStation.reportWarning(
+          "Telemetry: type mismatch during get "
+              + name
+              + ": expected int[], got "
+              + item.type.getValueStr(),
+          false);
+      return defaultValue;
+    }
+  }
+
+  public static String getValue(String name, String defaultValue) {
+    Telemetry table = getTelemetry();
+
+    if (!table.entries.containsKey(name)) {
+      DriverStation.reportWarning(
+          "Telemetry: entry " + name + " does not exist, creating with type String", false);
+      System.out.println("Telemetry: entry " + name + " does not exist, creating with type String");
+      addValue(name, NetworkTableType.kString);
     }
 
-    public static String[] getValue(String name, String[] defaultValue) {
-        Telemetry table = getTelemetry();
-    
-        if (!table.entries.containsKey(name)) {
-        DriverStation.reportWarning(
-            "Telemetry: entry " + name + " does not exist, creating with type String[]", false);
-        System.out.println(
-            "Telemetry: entry " + name + " does not exist, creating with type String[]");
-        addValue(name, NetworkTableType.kStringArray);
-        }
-    
-        TelemetryItem item = table.entries.get(name);
-        if (item.type == NetworkTableType.kStringArray) {
-        return ((StringArraySubscriber) item.subscriber).get(defaultValue);
-        } else {
-        DriverStation.reportWarning(
-            "Telemetry: type mismatch during get "
-                + name
-                + ": expected String[], got "
-                + item.type.getValueStr(),
-            false);
-        return defaultValue;
-        }
+    TelemetryItem item = table.entries.get(name);
+    if (item.type == NetworkTableType.kString) {
+      return ((StringSubscriber) item.subscriber).get(defaultValue);
+    } else {
+      DriverStation.reportWarning(
+          "Telemetry: type mismatch during get "
+              + name
+              + ": expected String, got "
+              + item.type.getValueStr(),
+          false);
+      return defaultValue;
+    }
+  }
+
+  public static String[] getValue(String name, String[] defaultValue) {
+    Telemetry table = getTelemetry();
+
+    if (!table.entries.containsKey(name)) {
+      DriverStation.reportWarning(
+          "Telemetry: entry " + name + " does not exist, creating with type String[]", false);
+      System.out.println(
+          "Telemetry: entry " + name + " does not exist, creating with type String[]");
+      addValue(name, NetworkTableType.kStringArray);
     }
 
-    public static byte[] getValue(String name, byte[] defaultValue) {
-        Telemetry table = getTelemetry();
-    
-        if (!table.entries.containsKey(name)) {
-        DriverStation.reportWarning(
-            "Telemetry: entry " + name + " does not exist, creating with type byte[]", false);
-        System.out.println(
-            "Telemetry: entry " + name + " does not exist, creating with type byte[]");
-        addValue(name, NetworkTableType.kRaw);
-        }
-    
-        TelemetryItem item = table.entries.get(name);
-        if (item.type == NetworkTableType.kRaw) {
-        return ((RawSubscriber) item.subscriber).get(defaultValue);
-        } else {
-        DriverStation.reportWarning(
-            "Telemetry: type mismatch during get "
-                + name
-                + ": expected byte[], got "
-                + item.type.getValueStr(),
-            false);
-        return defaultValue;
-        }
+    TelemetryItem item = table.entries.get(name);
+    if (item.type == NetworkTableType.kStringArray) {
+      return ((StringArraySubscriber) item.subscriber).get(defaultValue);
+    } else {
+      DriverStation.reportWarning(
+          "Telemetry: type mismatch during get "
+              + name
+              + ": expected String[], got "
+              + item.type.getValueStr(),
+          false);
+      return defaultValue;
+    }
+  }
+
+  public static byte[] getValue(String name, byte[] defaultValue) {
+    Telemetry table = getTelemetry();
+
+    if (!table.entries.containsKey(name)) {
+      DriverStation.reportWarning(
+          "Telemetry: entry " + name + " does not exist, creating with type byte[]", false);
+      System.out.println("Telemetry: entry " + name + " does not exist, creating with type byte[]");
+      addValue(name, NetworkTableType.kRaw);
     }
 
-    public static Object getValue(String name, Object defaultValue) {
-        DriverStation.reportWarning(
-            "Telemetry: generic getValue() called for "
-                + name
-                + " with type "
-                + defaultValue.getClass().getName()
-                + ", expected primitive",
-            false);
-        return defaultValue;
+    TelemetryItem item = table.entries.get(name);
+    if (item.type == NetworkTableType.kRaw) {
+      return ((RawSubscriber) item.subscriber).get(defaultValue);
+    } else {
+      DriverStation.reportWarning(
+          "Telemetry: type mismatch during get "
+              + name
+              + ": expected byte[], got "
+              + item.type.getValueStr(),
+          false);
+      return defaultValue;
     }
+  }
 
-    public static Object getValue(String name, Object[] defaultValue) {
-        DriverStation.reportWarning(
-            "Telemetry: generic getValue() called for "
-                + name
-                + " with type "
-                + defaultValue.getClass().getName()
-                + "[], expected primitive[]",
-            false);
-        return defaultValue;
-    }
+  public static Object getValue(String name, Object defaultValue) {
+    DriverStation.reportWarning(
+        "Telemetry: generic getValue() called for "
+            + name
+            + " with type "
+            + defaultValue.getClass().getName()
+            + ", expected primitive",
+        false);
+    return defaultValue;
+  }
+
+  public static Object getValue(String name, Object[] defaultValue) {
+    DriverStation.reportWarning(
+        "Telemetry: generic getValue() called for "
+            + name
+            + " with type "
+            + defaultValue.getClass().getName()
+            + "[], expected primitive[]",
+        false);
+    return defaultValue;
+  }
 }
