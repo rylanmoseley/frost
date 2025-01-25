@@ -21,11 +21,43 @@ public final class Constants {
   }
 
   public static class ArmConstants {
+    public enum Mode {
+      CUBE,
+      CONE
+    }
+    public static Mode DEFAULT_MODE = Mode.CUBE;
 
     public static class ClawConstants {
 
-      public static final Value clawOpen = Value.kForward;
-      public static final Value clawClosed = Value.kReverse;
+      public static class CAN {
+        public static int ROLLER_LEFT = 0;
+        public static int ROLLER_RIGHT = 0;
+        public static int PNEUMATIC_HUB = 0;
+      }
+
+      public static class PNEUMATIC_CHANNEL {
+        public static int CLAMP_FORWARD = 0;
+        public static int CLAMP_REVERSE = 0;
+      }
+
+      public static class DIO {
+        public static int BEAM_BREAK = 0;
+      }
+
+      public static final boolean BEAM_BREAK_BROKEN_VALUE = true;
+
+      public static final Value CLAW_OPEN = Value.kForward;
+      public static final Value CLAW_CLOSED = Value.kReverse;
+
+      public class RollerSpeeds {
+        public static final double CONE_IDLE = 0;
+        public static final double CONE_INTAKE = 0;
+        public static final double CONE_EJECT = 0;
+        
+        public static final double CUBE_IDLE = 0;
+        public static final double CUBE_INTAKE = 0;
+        public static final double CUBE_EJECT = 0;
+      }
     }
   }
 }
