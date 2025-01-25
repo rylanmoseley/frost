@@ -1,10 +1,10 @@
 package frc.robot.subsystems.Arm;
 
 import com.revrobotics.REVLibError;
+import com.revrobotics.spark.SparkAbsoluteEncoder;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.SparkAbsoluteEncoder;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.networktables.NetworkTableType;
@@ -30,8 +30,10 @@ public class Claw extends SubsystemBase {
   private SparkMax m_rollerRight =
       new SparkMax(ClawConstants.CAN.ROLLER_RIGHT, MotorType.kBrushless);
 
-private SparkAbsoluteEncoder m_rollerLeftEncoder = (SparkAbsoluteEncoder) m_rollerLeft.getEncoder();
-private SparkAbsoluteEncoder m_rollerRightEncoder = (SparkAbsoluteEncoder) m_rollerRight.getEncoder();
+  private SparkAbsoluteEncoder m_rollerLeftEncoder =
+      (SparkAbsoluteEncoder) m_rollerLeft.getEncoder();
+  private SparkAbsoluteEncoder m_rollerRightEncoder =
+      (SparkAbsoluteEncoder) m_rollerRight.getEncoder();
 
   private PneumaticHub m_pneumaticHub = new PneumaticHub(ClawConstants.CAN.PNEUMATIC_HUB);
   private DoubleSolenoid m_clamp =
