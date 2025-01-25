@@ -14,7 +14,7 @@ package frc.robot.utilities;
 import edu.wpi.first.networktables.*;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.Constants.TelemetryConstants;
-import java.util.Map;
+import java.util.HashMap;
 
 public class Telemetry {
   private static Telemetry telemetryInstance = null;
@@ -33,7 +33,7 @@ public class Telemetry {
 
   private NetworkTableInstance ntInstance = NetworkTableInstance.getDefault();
   private NetworkTable telemetryTable = ntInstance.getTable(TelemetryConstants.ROOT_NAME);
-  private Map<String, TelemetryItem> entries;
+  private HashMap<String, TelemetryItem> entries = new HashMap<String, TelemetryItem>();
 
   private Telemetry() {
     System.out.println(
@@ -46,6 +46,10 @@ public class Telemetry {
     return telemetryInstance;
   }
 
+  public static void startSimulationServer() {
+    getTelemetry().ntInstance.startServer();
+  }
+
   public static void addValue(String name, NetworkTableType type, PubSubOption... options) {
     Telemetry table = getTelemetry();
     Topic top;
@@ -56,56 +60,67 @@ public class Telemetry {
         top = table.telemetryTable.getBooleanTopic(name);
         pub = ((BooleanTopic) top).publish(options);
         sub = ((BooleanTopic) top).subscribe(false, options);
+        ((BooleanPublisher) pub).set(false);
         break;
       case kBooleanArray:
         top = table.telemetryTable.getBooleanArrayTopic(name);
         pub = ((BooleanArrayTopic) top).publish(options);
         sub = ((BooleanArrayTopic) top).subscribe(new boolean[] {}, options);
+        ((BooleanArrayPublisher) pub).set(new boolean[] {});
         break;
       case kDouble:
         top = table.telemetryTable.getDoubleTopic(name);
         pub = ((DoubleTopic) top).publish(options);
         sub = ((DoubleTopic) top).subscribe(0, options);
+        ((DoublePublisher) pub).set(0);
         break;
       case kDoubleArray:
         top = table.telemetryTable.getDoubleArrayTopic(name);
         pub = ((DoubleArrayTopic) top).publish(options);
         sub = ((DoubleArrayTopic) top).subscribe(new double[] {}, options);
+        ((DoubleArrayPublisher) pub).set(new double[] {});
         break;
       case kFloat:
         top = table.telemetryTable.getFloatTopic(name);
         pub = ((FloatTopic) top).publish(options);
         sub = ((FloatTopic) top).subscribe(0, options);
+        ((FloatPublisher) pub).set(0);
         break;
       case kFloatArray:
         top = table.telemetryTable.getFloatArrayTopic(name);
         pub = ((FloatArrayTopic) top).publish(options);
         sub = ((FloatArrayTopic) top).subscribe(new float[] {}, options);
+        ((FloatArrayPublisher) pub).set(new float[] {});
         break;
       case kInteger:
         top = table.telemetryTable.getIntegerTopic(name);
         pub = ((IntegerTopic) top).publish(options);
         sub = ((IntegerTopic) top).subscribe(0, options);
+        ((IntegerPublisher) pub).set(0);
         break;
       case kIntegerArray:
         top = table.telemetryTable.getIntegerArrayTopic(name);
         pub = ((IntegerArrayTopic) top).publish(options);
         sub = ((IntegerArrayTopic) top).subscribe(new long[] {}, options);
+        ((IntegerArrayPublisher) pub).set(new long[] {});
         break;
       case kRaw:
         top = table.telemetryTable.getRawTopic(name);
         pub = ((RawTopic) top).publish(type.getValueStr(), options);
         sub = ((RawTopic) top).subscribe(type.getValueStr(), new byte[] {}, options);
+        ((RawPublisher) pub).set(new byte[] {});
         break;
       case kString:
         top = table.telemetryTable.getStringTopic(name);
         pub = ((StringTopic) top).publish(options);
         sub = ((StringTopic) top).subscribe("", options);
+        ((StringPublisher) pub).set("");
         break;
       case kStringArray:
         top = table.telemetryTable.getStringArrayTopic(name);
         pub = ((StringArrayTopic) top).publish(options);
         sub = ((StringArrayTopic) top).subscribe(new String[] {}, options);
+        ((StringArrayPublisher) pub).set(new String[] {});
         break;
       case kUnassigned:
       default:
@@ -325,6 +340,31 @@ public class Telemetry {
     }
   }
 
+  public static boolean getValue(String name, boolean defaultValue) {
+    Telemetry table = getTelemetry();
+
+    if (!table.entries.containsKey(name)) {
+      DriverStation.reportWarning(
+          "Telemetry: entry " + name + " does not exist, creating with type boolean", false);
+      System.out.println(
+          "Telemetry: entry " + name + " does not exist, creating with type boolean");
+      addValue(name, NetworkTableType.kBoolean);
+    }
+
+    TelemetryItem item = table.entries.get(name);
+    if (item.type == NetworkTableType.kBoolean) {
+      return ((BooleanSubscriber) item.subscriber).get(defaultValue);
+    } else {
+      DriverStation.reportWarning(
+          "Telemetry: type mismatch during get "
+              + name
+              + ": expected boolean, got "
+              + item.type.getValueStr(),
+          false);
+      return defaultValue;
+    }
+  }
+
   public static double[] getValue(String name, double[] defaultValue) {
     Telemetry table = getTelemetry();
 
@@ -344,6 +384,31 @@ public class Telemetry {
           "Telemetry: type mismatch during get "
               + name
               + ": expected double[], got "
+              + item.type.getValueStr(),
+          false);
+      return defaultValue;
+    }
+  }
+
+  public static boolean[] getValue(String name, boolean[] defaultValue) {
+    Telemetry table = getTelemetry();
+
+    if (!table.entries.containsKey(name)) {
+      DriverStation.reportWarning(
+          "Telemetry: entry " + name + " does not exist, creating with type boolean[]", false);
+      System.out.println(
+          "Telemetry: entry " + name + " does not exist, creating with type boolean[]");
+      addValue(name, NetworkTableType.kBooleanArray);
+    }
+
+    TelemetryItem item = table.entries.get(name);
+    if (item.type == NetworkTableType.kBooleanArray) {
+      return ((BooleanArraySubscriber) item.subscriber).get(defaultValue);
+    } else {
+      DriverStation.reportWarning(
+          "Telemetry: type mismatch during get "
+              + name
+              + ": expected boolean[], got "
               + item.type.getValueStr(),
           false);
       return defaultValue;
