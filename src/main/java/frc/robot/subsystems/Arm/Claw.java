@@ -47,9 +47,10 @@ public class Claw extends SubsystemBase {
               + m_pneumaticHub.getCompressorCurrent()
               + m_pneumaticHub.getSolenoidsTotalCurrent();
 
-  // TODO simulation
+  // TODO simulation setup
 
   // TODO dashboard/NT setup
+
   public Claw() {
     System.out.println("Claw instantiated");
   }
@@ -174,22 +175,44 @@ public class Claw extends SubsystemBase {
   /** To stop rollers, call {@link Claw#stopRollersCommand()} instead */
   public Command setRollerSpeedCommand(DoubleSupplier speed) {
     return this.runOnce(
-        () -> {
-          m_rollerLeft.set(speed.getAsDouble());
-        });
+            () -> {
+              m_rollerLeft.set(speed.getAsDouble());
+            })
+        .withName("Custom roller speed")
+        .withInterruptBehavior(InterruptionBehavior.kCancelSelf);
   }
 
   public Command stopRollersCommand() {
     return this.runOnce(
-        () -> {
-          m_rollerLeft.set(0);
-          // stop the follower too, just in case
-          m_rollerRight.set(0);
-        });
+            () -> {
+              m_rollerLeft.set(0);
+              // stop the follower too, just in case
+              m_rollerRight.set(0);
+            })
+        .withName("Stop rollers")
+        .withInterruptBehavior(InterruptionBehavior.kCancelSelf);
+  }
+
+  // on idle, stop rollers and close claw
+  public Command idleCommand() {
+    return stopRollersCommand()
+        .andThen(closeClawCommand())
+        .andThen(
+            this.run(
+                    () -> {
+                      // do nothing
+                    })
+                .withName("Idle"))
+        .withInterruptBehavior(InterruptionBehavior.kCancelSelf);
   }
 
   @Override
   public void periodic() {
     // TODO update dashboard/NT
+  }
+
+  @Override
+  public void simulationPeriodic() {
+    // TODO update simulation
   }
 }

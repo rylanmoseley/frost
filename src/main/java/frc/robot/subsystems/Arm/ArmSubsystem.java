@@ -17,5 +17,7 @@ public class ArmSubsystem extends SubsystemBase {
   public final Supplier<Mode> mode = () -> currentMode;
   public final DoubleSupplier totalCurrentDraw = () -> m_claw.totalCurrentDraw.getAsDouble();
 
-  public ArmSubsystem() {}
+  public ArmSubsystem() {
+    m_claw.setDefaultCommand(m_claw.idleCommand());
+  }
 }
