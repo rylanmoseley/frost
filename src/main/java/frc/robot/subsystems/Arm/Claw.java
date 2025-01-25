@@ -6,15 +6,18 @@ import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import edu.wpi.first.networktables.NetworkTableType;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticHub;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ArmConstants.ClawConstants;
 import frc.robot.Constants.ArmConstants.ClawConstants.RollerSpeeds;
+import frc.robot.utilities.Telemetry;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
@@ -49,10 +52,33 @@ public class Claw extends SubsystemBase {
 
   // TODO simulation setup
 
-  // TODO dashboard/NT setup
-
   public Claw() {
     System.out.println("Claw instantiated");
+
+    Telemetry.addValue("Arm/Claw/Pneumatics/ForwardVoltage", NetworkTableType.kDouble);
+    Telemetry.addValue("Arm/Claw/Pneumatics/ReverseVoltage", NetworkTableType.kDouble);
+    Telemetry.addValue("Arm/Claw/Pneumatics/PressureSwitch", NetworkTableType.kBoolean);
+    Telemetry.addValue("Arm/Claw/Pneumatics/CompressorCurrent", NetworkTableType.kDouble);
+    Telemetry.addValue("Arm/Claw/Pneumatics/InputVoltage", NetworkTableType.kDouble);
+    Telemetry.addValue("Arm/Claw/Pneumatics/SolenoidsTotalCurrent", NetworkTableType.kDouble);
+
+    Telemetry.addValue("Arm/Claw/BeamBreak/RawValue", NetworkTableType.kBoolean);
+    Telemetry.addValue("Arm/Claw/BeamBreak/LogicValue", NetworkTableType.kBoolean);
+
+    Telemetry.addValue("Arm/Claw/Clamp/IsOpen", NetworkTableType.kBoolean);
+    Telemetry.addValue("Arm/Claw/Clamp/IsClosed", NetworkTableType.kBoolean);
+
+    Telemetry.addValue("Arm/Claw/Roller/Output", NetworkTableType.kDouble);
+    Telemetry.addValue("Arm/Claw/Roller/LeftCurrentDraw", NetworkTableType.kDouble);
+    Telemetry.addValue("Arm/Claw/Roller/RightCurrentDraw", NetworkTableType.kDouble);
+    Telemetry.addValue("Arm/Claw/Roller/LeftTemperature", NetworkTableType.kDouble);
+    Telemetry.addValue("Arm/Claw/Roller/RightTemperature", NetworkTableType.kDouble);
+    Telemetry.addValue("Arm/Claw/Roller/LeftVoltageIn", NetworkTableType.kDouble);
+    Telemetry.addValue("Arm/Claw/Roller/RightVoltageIn", NetworkTableType.kDouble);
+    Telemetry.addValue("Arm/Claw/Roller/LeftHasFault", NetworkTableType.kBoolean);
+    Telemetry.addValue("Arm/Claw/Roller/RightHasFault", NetworkTableType.kBoolean);
+
+    Telemetry.addValue("Arm/Claw/TotalCurrentDraw", NetworkTableType.kDouble);
   }
 
   public REVLibError configureAll(
@@ -208,7 +234,39 @@ public class Claw extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // TODO update dashboard/NT
+    SmartDashboard.putData("Arm/Claw/ClawSubsystem", this);
+
+    Telemetry.setValue(
+        "Arm/Claw/Pneumatics/ForwardVoltage",
+        m_pneumaticHub.getAnalogVoltage(ClawConstants.PNEUMATIC_CHANNEL.CLAMP_FORWARD));
+    Telemetry.setValue(
+        "Arm/Claw/Pneumatics/ReverseVoltage",
+        m_pneumaticHub.getAnalogVoltage(ClawConstants.PNEUMATIC_CHANNEL.CLAMP_REVERSE));
+    Telemetry.setValue("Arm/Claw/Pneumatics/PressureSwitch", m_pneumaticHub.getPressureSwitch());
+    Telemetry.setValue(
+        "Arm/Claw/Pneumatics/CompressorCurrent", m_pneumaticHub.getCompressorCurrent());
+    Telemetry.setValue("Arm/Claw/Pneumatics/InputVoltage", m_pneumaticHub.getInputVoltage());
+    Telemetry.setValue(
+        "Arm/Claw/Pneumatics/SolenoidsTotalCurrent",
+        m_pneumaticHub.getPressure(ClawConstants.PNEUMATIC_CHANNEL.PRESSURE_SWITCH_PORT));
+
+    Telemetry.setValue("Arm/Claw/BeamBreak/RawValue", m_beamBreak.get());
+    Telemetry.setValue("Arm/Claw/BeamBreak/LogicValue", beamBreak.getAsBoolean());
+
+    Telemetry.setValue("Arm/Claw/Clamp/IsOpen", isOpen.getAsBoolean());
+    Telemetry.setValue("Arm/Claw/Clamp/IsClosed", isClosed.getAsBoolean());
+
+    Telemetry.setValue("Arm/Claw/Roller/Output", rollerOutput.getAsDouble());
+    Telemetry.setValue("Arm/Claw/Roller/LeftCurrentDraw", m_rollerLeft.getOutputCurrent());
+    Telemetry.setValue("Arm/Claw/Roller/RightCurrentDraw", m_rollerRight.getOutputCurrent());
+    Telemetry.setValue("Arm/Claw/Roller/LeftTemperature", m_rollerLeft.getMotorTemperature());
+    Telemetry.setValue("Arm/Claw/Roller/RightTemperature", m_rollerRight.getMotorTemperature());
+    Telemetry.setValue("Arm/Claw/Roller/LeftVoltageIn", m_rollerLeft.getBusVoltage());
+    Telemetry.setValue("Arm/Claw/Roller/RightVoltageIn", m_rollerRight.getBusVoltage());
+    Telemetry.setValue("Arm/Claw/Roller/LeftHasFault", m_rollerLeft.hasActiveFault());
+    Telemetry.setValue("Arm/Claw/Roller/RightHasFault", m_rollerRight.hasActiveFault());
+
+    Telemetry.setValue("Arm/Claw/TotalCurrentDraw", totalCurrentDraw.getAsDouble());
   }
 
   @Override

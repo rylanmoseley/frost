@@ -20,6 +20,10 @@ public final class Constants {
     public static final int kOperatorControllerPort = 1;
   }
 
+  public static class TelemetryConstants {
+    public static final String ROOT_NAME = "telemetry";
+  }
+
   public static class ArmConstants {
     public enum Mode {
       CUBE,
@@ -39,6 +43,8 @@ public final class Constants {
       public static class PNEUMATIC_CHANNEL {
         public static int CLAMP_FORWARD = 0;
         public static int CLAMP_REVERSE = 0;
+
+        public static int PRESSURE_SWITCH_PORT = 0; // analog channel
       }
 
       public static class DIO {
