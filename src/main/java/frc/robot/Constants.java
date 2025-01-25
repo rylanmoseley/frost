@@ -25,6 +25,7 @@ public final class Constants {
       CUBE,
       CONE
     }
+
     public static Mode DEFAULT_MODE = Mode.CUBE;
 
     public static class ClawConstants {
@@ -53,7 +54,7 @@ public final class Constants {
         public static final double CONE_IDLE = 0;
         public static final double CONE_INTAKE = 0;
         public static final double CONE_EJECT = 0;
-        
+
         public static final double CUBE_IDLE = 0;
         public static final double CUBE_INTAKE = 0;
         public static final double CUBE_EJECT = 0;
