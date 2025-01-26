@@ -4,7 +4,9 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -31,20 +33,24 @@ public class RobotContainer {
       new CommandXboxController(OperatorConstants.kDriverControllerPort);
 
   private final CommandOperatorController m_operatorController =
-      new CommandOperatorController(OperatorConstants.kOperatorControllerPort);
+      new CommandOperatorController(
+          OperatorConstants.kOperatorControllerLeftPort,
+          OperatorConstants.kOperatorControllerRightPort);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
     configureBindings();
+
+    SmartDashboard.putData("CommandScheduler", CommandScheduler.getInstance());
   }
 
-  /** Accumulates the active simulation current draw of all subsystems/mechanisms */
-  public final DoubleSupplier totalRobotSimulationCurrentDraw =
+  /** Accumulates the active current draw of all subsystems/mechanisms */
+  public final DoubleSupplier totalRobotCurrentDraw =
       () ->
-          m_armSubsystem.simulationCurrentDraw.getAsDouble()
-              + m_swerveSubsystem.simulationCurrentDraw.getAsDouble()
-              + m_LEDSubsystem.simulationCurrentDraw.getAsDouble();
+          m_armSubsystem.totalCurrentDraw.getAsDouble()
+              + m_swerveSubsystem.totalCurrentDraw.getAsDouble()
+              + m_LEDSubsystem.totalCurrentDraw.getAsDouble();
 
   /**
    * Use this method to define your trigger->command mappings. Triggers can be created via the

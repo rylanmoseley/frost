@@ -5,5 +5,5 @@ import java.util.function.DoubleSupplier;
 
 public class SwerveSubsystem extends SubsystemBase {
 
-  public final DoubleSupplier simulationCurrentDraw = () -> 0;
+  public final DoubleSupplier totalCurrentDraw = () -> 0;
 }
