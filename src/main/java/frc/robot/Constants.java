@@ -4,7 +4,9 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.util.Color8Bit;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -73,6 +75,28 @@ public final class Constants {
         public static final double COMPRESSOR_ON_CURRENT = 0;
         public static final double PRESSURE_INCREMENT = 0.1;
         public static final double PRESSURE_PISTON_DROP = 5;
+
+        /** Pixels */
+        public static final double MECHANISM2D_WIDTH = 0;
+        /** Pixels */
+        public static final double MECHANISM2D_HEIGHT = 0;
+        public static final double MECHANISM2D_PIXELS_PER_INCH = 0;
+
+        /** Pixels */
+        public static final Translation2d MECHANISM2D_ROOT = new Translation2d(0, 0);
+
+        public static final Color8Bit CLAW_EMPTY_COLOR = new Color8Bit(0, 0, 0);
+        public static final Color8Bit CLAW_FULL_COLOR = new Color8Bit(0, 0, 0);
+
+        /** Inches */
+        public static final double MECHANISM2D_CLAW_LENGTH = 0;
+        /** Degrees */
+        public static final double MECHANISM2D_CLAW_ANGLE_OPEN = 0;
+        /** Degrees */
+        public static final double MECHANISM2D_CLAW_ANGLE_CLOSED = 0;
+
+        /** Inches */
+        public static final double MECHANISM2D_ROLLER_RADIUS = 0;
       }
     }
   }

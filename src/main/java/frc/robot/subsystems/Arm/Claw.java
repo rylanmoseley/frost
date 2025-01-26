@@ -10,25 +10,29 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTableType;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.PneumaticHub;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
-import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import edu.wpi.first.wpilibj.simulation.DIOSim;
 import edu.wpi.first.wpilibj.simulation.DoubleSolenoidSim;
 import edu.wpi.first.wpilibj.simulation.PneumaticsBaseSim;
 import edu.wpi.first.wpilibj.simulation.RoboRioSim;
+import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.Robot;
 import frc.robot.Constants.ArmConstants.ClawConstants;
 import frc.robot.Constants.ArmConstants.ClawConstants.RollerSpeeds;
+import frc.robot.Robot;
 import frc.robot.utilities.Telemetry;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
@@ -101,6 +105,37 @@ public class Claw extends SubsystemBase {
 
   @SuppressWarnings("unused") // yes we want it be quiet linter
   private DIOSim m_beamBreakSim = new DIOSim(ClawConstants.DIO.BEAM_BREAK);
+
+  // Mechanism2d setup
+  private Mechanism2d m_clawMechanism =
+      new Mechanism2d(
+          ClawConstants.SimulationConstants.MECHANISM2D_WIDTH,
+          ClawConstants.SimulationConstants.MECHANISM2D_HEIGHT);
+  private MechanismRoot2d m_mechClawRoot =
+      m_clawMechanism.getRoot(
+          "root",
+          ClawConstants.SimulationConstants.MECHANISM2D_ROOT.getX(),
+          ClawConstants.SimulationConstants.MECHANISM2D_ROOT.getY());
+  private MechanismLigament2d m_mechClawLeft =
+      m_mechClawRoot.append(
+          new MechanismLigament2d(
+              "clawLeft",
+              ClawConstants.SimulationConstants.MECHANISM2D_CLAW_LENGTH,
+              ClawConstants.SimulationConstants.MECHANISM2D_CLAW_ANGLE_OPEN));
+  private MechanismLigament2d m_mechRollerLeft =
+      m_mechClawLeft.append(
+          new MechanismLigament2d(
+              "rollerLeft", ClawConstants.SimulationConstants.MECHANISM2D_ROLLER_RADIUS, 0));
+  private MechanismLigament2d m_mechClawRight =
+      m_mechClawRoot.append(
+          new MechanismLigament2d(
+              "clawRight",
+              ClawConstants.SimulationConstants.MECHANISM2D_CLAW_LENGTH,
+              180 - ClawConstants.SimulationConstants.MECHANISM2D_CLAW_ANGLE_OPEN));
+  private MechanismLigament2d m_mechRollerRight =
+      m_mechClawRight.append(
+          new MechanismLigament2d(
+              "rollerRight", ClawConstants.SimulationConstants.MECHANISM2D_ROLLER_RADIUS, 0));
 
   public Claw() {
     System.out.println("Claw instantiated");
@@ -325,6 +360,43 @@ public class Claw extends SubsystemBase {
     Telemetry.setValue("Arm/Claw/Roller/RightVelocityRPM", m_rollerRightEncoder.getVelocity());
 
     Telemetry.setValue("Arm/Claw/TotalCurrentDraw", totalCurrentDraw.getAsDouble());
+
+    // Mechanism2d update
+    m_mechClawLeft.setAngle(
+        isOpen.getAsBoolean()
+            ? ClawConstants.SimulationConstants.MECHANISM2D_CLAW_ANGLE_OPEN
+            : ClawConstants.SimulationConstants.MECHANISM2D_CLAW_ANGLE_CLOSED);
+    m_mechClawRight.setAngle(
+        isClosed.getAsBoolean()
+            ? 180 - ClawConstants.SimulationConstants.MECHANISM2D_CLAW_ANGLE_OPEN
+            : 180 - ClawConstants.SimulationConstants.MECHANISM2D_CLAW_ANGLE_CLOSED);
+
+    if (beamBreak.getAsBoolean()) {
+      m_mechClawLeft.setColor(ClawConstants.SimulationConstants.CLAW_FULL_COLOR);
+      m_mechClawRight.setColor(ClawConstants.SimulationConstants.CLAW_FULL_COLOR);
+      m_mechRollerLeft.setColor(ClawConstants.SimulationConstants.CLAW_FULL_COLOR);
+      m_mechRollerRight.setColor(ClawConstants.SimulationConstants.CLAW_FULL_COLOR);
+    } else {
+      m_mechClawLeft.setColor(ClawConstants.SimulationConstants.CLAW_EMPTY_COLOR);
+      m_mechClawRight.setColor(ClawConstants.SimulationConstants.CLAW_EMPTY_COLOR);
+      m_mechRollerLeft.setColor(ClawConstants.SimulationConstants.CLAW_EMPTY_COLOR);
+      m_mechRollerRight.setColor(ClawConstants.SimulationConstants.CLAW_EMPTY_COLOR);
+    }
+
+    m_mechRollerLeft.setAngle(
+        (Units.radiansToDegrees(
+                        Units.rotationsPerMinuteToRadiansPerSecond(
+                            m_rollerLeftEncoder.getVelocity()))
+                    * .02 // degrees per 20ms
+                + m_mechRollerLeft.getAngle())
+            % 360);
+    m_mechRollerRight.setAngle(
+        (Units.radiansToDegrees(
+                        Units.rotationsPerMinuteToRadiansPerSecond(
+                            m_rollerRightEncoder.getVelocity()))
+                    * .02 // degrees per 20ms
+                + m_mechRollerRight.getAngle())
+            % 360);
   }
 
   @Override
