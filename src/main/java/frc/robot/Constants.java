@@ -78,8 +78,10 @@ public final class Constants {
 
         /** Pixels */
         public static final double MECHANISM2D_WIDTH = 0;
+
         /** Pixels */
         public static final double MECHANISM2D_HEIGHT = 0;
+
         public static final double MECHANISM2D_PIXELS_PER_INCH = 0;
 
         /** Pixels */
@@ -90,8 +92,10 @@ public final class Constants {
 
         /** Inches */
         public static final double MECHANISM2D_CLAW_LENGTH = 0;
+
         /** Degrees */
         public static final double MECHANISM2D_CLAW_ANGLE_OPEN = 0;
+
         /** Degrees */
         public static final double MECHANISM2D_CLAW_ANGLE_CLOSED = 0;
 
