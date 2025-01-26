@@ -38,9 +38,7 @@ public class CommandOperatorController {
     Telemetry.setValue("buttonBoard/16", false);
   }
 
-  /**
-   * Indexes start at 0
-   */
+  /** Indexes start at 0 */
   public boolean getLED(int LEDNumber) {
     if (LEDNumber > 16 || LEDNumber < 0 || LEDNumber == 9) {
       DriverStation.reportError("Button Board: [GET] Invalid LED number: " + LEDNumber, false);
@@ -49,9 +47,7 @@ public class CommandOperatorController {
     return Telemetry.getValue("buttonBoard/" + LEDNumber, false);
   }
 
-  /**
-   * Indexes start at 0
-   */
+  /** Indexes start at 0 */
   public void setLED(int LEDNumber, boolean value) {
     if (LEDNumber > 16 || LEDNumber < 0 || LEDNumber == 9) {
       DriverStation.reportError("Button Board: [SET] Invalid LED number: " + LEDNumber, false);
@@ -60,9 +56,7 @@ public class CommandOperatorController {
     Telemetry.setValue("buttonBoard/" + LEDNumber, value);
   }
 
-  /**
-   * Indexes start at 0
-   */
+  /** Indexes start at 0 */
   public boolean toggleLED(int LEDNumber) {
     if (LEDNumber > 16 || LEDNumber < 0 || LEDNumber == 9) {
       DriverStation.reportError("Button Board: [TOGGLE] Invalid LED number: " + LEDNumber, false);
@@ -77,27 +71,21 @@ public class CommandOperatorController {
     }
   }
 
-  /**
-   * Indexes start at 0
-   */
+  /** Indexes start at 0 */
   public Trigger button(int buttonNumber) {
     return (buttonNumber < 9)
         ? leftBoard.button(buttonNumber + 1)
         : rightBoard.button(buttonNumber - 9 + 1);
   }
 
-  /**
-   * Indexes start at 0
-   */
+  /** Indexes start at 0 */
   public boolean getRawButton(int buttonNumber) {
     return (buttonNumber < 9)
         ? leftBoard.getHID().getRawButton(buttonNumber + 1)
         : rightBoard.getHID().getRawButton(buttonNumber - 9 + 1);
   }
 
-  /**
-   * Value returned is either 0 or ~1
-   */
+  /** Value returned is either 0 or ~1 */
   private double getAxis(int axisNumber) {
     if (Math.abs(rightBoard.getRawAxis(axisNumber)) < 0.5) {
       return 0;
@@ -146,11 +134,11 @@ public class CommandOperatorController {
     return button(6);
   }
 
-  public Trigger cubeMode () {
+  public Trigger cubeMode() {
     return button(7);
   }
 
-  public Trigger coneMode () {
+  public Trigger coneMode() {
     return button(8);
   }
 
@@ -182,7 +170,7 @@ public class CommandOperatorController {
     return button(15);
   }
 
-  public Trigger shwerve () {
+  public Trigger shwerve() {
     return button(16);
   }
 }
