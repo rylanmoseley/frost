@@ -17,7 +17,8 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 public final class Constants {
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
-    public static final int kOperatorControllerPort = 1;
+    public static final int kOperatorControllerLeftPort = 1;
+    public static final int kOperatorControllerRightPort = 2;
   }
 
   public static class TelemetryConstants {
