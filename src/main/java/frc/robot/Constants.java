@@ -8,6 +8,8 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import frc.robot.subsystems.Arm.ArmStageConfig;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -37,9 +39,90 @@ public final class Constants {
     public static Mode DEFAULT_MODE = Mode.CUBE;
 
     public static class ArmStagesConstants {
-      public static ArmStageConfig STAGE_1_CONFIG = new ArmStageConfig(0, 0, Configs.Arm.STAGE_1_CONFIG);
-      public static ArmStageConfig STAGE_2_CONFIG = new ArmStageConfig(0, 0, Configs.Arm.STAGE_2_CONFIG);
-      public static ArmStageConfig STAGE_3_CONFIG = new ArmStageConfig(0, 0, Configs.Arm.STAGE_3_CONFIG);
+      public static ArmStageConfig STAGE_1_CONFIG =
+          new ArmStageConfig(0, 0, Configs.Arm.STAGE_1_CONFIG, StagePositions.STAGE_1);
+      public static ArmStageConfig STAGE_2_CONFIG =
+          new ArmStageConfig(0, 0, Configs.Arm.STAGE_2_CONFIG, StagePositions.STAGE_2);
+      public static ArmStageConfig STAGE_3_CONFIG =
+          new ArmStageConfig(0, 0, Configs.Arm.STAGE_3_CONFIG, StagePositions.STAGE_3);
+
+      public enum POSITIONS {
+        IDLE {
+          @Override
+          public String toString() {
+            return "Idle";
+          }
+        },
+        HIGH_CUBE {
+          @Override
+          public String toString() {
+            return "High Cube";
+          }
+        },
+        HIGH_CONE {
+          @Override
+          public String toString() {
+            return "High Cone";
+          }
+        },
+        MID_CUBE {
+          @Override
+          public String toString() {
+            return "Mid Cube";
+          }
+        },
+
+        MID_CONE {
+          @Override
+          public String toString() {
+            return "Mid Cone";
+          }
+        },
+        LOW_CUBE {
+          @Override
+          public String toString() {
+            return "Low Cube";
+          }
+        },
+        LOW_CONE {
+          @Override
+          public String toString() {
+            return "Low Cone";
+          }
+        },
+        SUBSTATION {
+          @Override
+          public String toString() {
+            return "Substation";
+          }
+        },
+        GROUND {
+          @Override
+          public String toString() {
+            return "Ground";
+          }
+        },
+        GROUND_TILT {
+          @Override
+          public String toString() {
+            return "Ground Tilt";
+          }
+        };
+
+        public String toString() {
+          return "Unknown";
+        }
+      }
+
+      public static final class StagePositions {
+        public static Map<POSITIONS, Double> STAGE_1 = new HashMap<>();
+        public static Map<POSITIONS, Double> STAGE_2 = new HashMap<>();
+        public static Map<POSITIONS, Double> STAGE_3 = new HashMap<>();
+
+        static {
+          // TODO add positions
+        }
+      }
     }
 
     public static class ClawConstants {
