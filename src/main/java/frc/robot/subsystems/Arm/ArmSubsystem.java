@@ -1,6 +1,7 @@
 package frc.robot.subsystems.Arm;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Configs;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.ArmConstants.ArmStagesConstants;
 import frc.robot.Constants.ArmConstants.Mode;
@@ -28,6 +29,6 @@ public class ArmSubsystem extends SubsystemBase {
     m_stage1.configureAll();
     m_stage2.configureAll();
     m_Stage3.configureAll();
-    m_claw.configureAll(null, null);
+    m_claw.configureAll(Configs.Arm.ROLLER_LEFT_CONFIG, Configs.Arm.ROLLER_RIGHT_CONFIG);
   }
 }

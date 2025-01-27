@@ -37,9 +37,9 @@ public final class Constants {
     public static Mode DEFAULT_MODE = Mode.CUBE;
 
     public static class ArmStagesConstants {
-      public static ArmStageConfig STAGE_1_CONFIG = new ArmStageConfig(0, 0, null);
-      public static ArmStageConfig STAGE_2_CONFIG = new ArmStageConfig(0, 0, null);
-      public static ArmStageConfig STAGE_3_CONFIG = new ArmStageConfig(0, 0, null);
+      public static ArmStageConfig STAGE_1_CONFIG = new ArmStageConfig(0, 0, Configs.Arm.STAGE_1_CONFIG);
+      public static ArmStageConfig STAGE_2_CONFIG = new ArmStageConfig(0, 0, Configs.Arm.STAGE_2_CONFIG);
+      public static ArmStageConfig STAGE_3_CONFIG = new ArmStageConfig(0, 0, Configs.Arm.STAGE_3_CONFIG);
     }
 
     public static class ClawConstants {
