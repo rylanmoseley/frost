@@ -7,6 +7,7 @@ package frc.robot;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.util.Color8Bit;
+import frc.robot.subsystems.Arm.ArmStageConfig;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -34,6 +35,12 @@ public final class Constants {
     }
 
     public static Mode DEFAULT_MODE = Mode.CUBE;
+
+    public static class ArmStagesConstants {
+      public static ArmStageConfig STAGE_1_CONFIG = new ArmStageConfig(0, 0, null);
+      public static ArmStageConfig STAGE_2_CONFIG = new ArmStageConfig(0, 0, null);
+      public static ArmStageConfig STAGE_3_CONFIG = new ArmStageConfig(0, 0, null);
+    }
 
     public static class ClawConstants {
 
