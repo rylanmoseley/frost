@@ -1,6 +1,7 @@
 package frc.robot.subsystems.Arm;
 
 import com.revrobotics.REVLibError;
+import com.revrobotics.sim.SparkAbsoluteEncoderSim;
 import com.revrobotics.sim.SparkMaxSim;
 import com.revrobotics.spark.SparkAbsoluteEncoder;
 import com.revrobotics.spark.SparkBase.ControlType;
@@ -11,12 +12,16 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkRelativeEncoder;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTableType;
+import edu.wpi.first.wpilibj.simulation.RoboRioSim;
+import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ArmConstants.ArmStagesConstants.POSITIONS;
+import frc.robot.Robot;
 import frc.robot.utilities.Telemetry;
 import java.util.function.DoubleSupplier;
 
@@ -27,7 +32,22 @@ public class ArmStage extends SubsystemBase {
   private SparkAbsoluteEncoder m_absoluteEncoder;
   private ArmStageConfig m_config;
   private String m_name;
-  private DoubleSupplier m_previousStagePosition;
+
+  private DCMotor m_simMotorModel = DCMotor.getNEO(1);
+  private SparkMaxSim m_simMotor;
+  private SparkAbsoluteEncoderSim m_simAbsoluteEncoder;
+  private SingleJointedArmSim m_simArm =
+      new SingleJointedArmSim(
+          m_simMotorModel,
+          m_config.getGearRatio(),
+          SingleJointedArmSim.estimateMOI(m_config.getArmLengthMeters(), m_config.getArmMass()),
+          m_config.getArmLengthMeters(),
+          m_config.getMinAngleRads(),
+          m_config.getMaxAngleRads(),
+          true,
+          m_config.getMinAngleRads(),
+          0.0,
+          0.0);
 
   private double m_targetPosition;
 
@@ -44,13 +64,10 @@ public class ArmStage extends SubsystemBase {
 
   public final DoubleSupplier totalCurrentDraw = () -> m_motor.getOutputCurrent();
 
-  public ArmStage(String name, ArmStageConfig config, DoubleSupplier previousStagePosition) {
+  public ArmStage(String name, ArmStageConfig config) {
     super(name);
     m_name = name;
-    m_previousStagePosition = previousStagePosition;
     m_config = config;
-
-    adjustedPosition = () -> absolutePosition.getAsDouble() + m_previousStagePosition.getAsDouble();
 
     m_motor = new SparkMax(config.getCanID(), MotorType.kBrushless);
     m_relativeEncoder = (SparkRelativeEncoder) m_motor.getEncoder();
@@ -70,10 +87,15 @@ public class ArmStage extends SubsystemBase {
     Telemetry.addValue("Arm/" + m_name + "/VoltageIn", NetworkTableType.kDouble);
 
     Telemetry.addValue("Arm/" + m_name + "/TotalCurrentDraw", NetworkTableType.kDouble);
+
+    if (Robot.isSimulation()) {
+      m_simMotor = new SparkMaxSim(m_motor, m_simMotorModel);
+      m_simAbsoluteEncoder = new SparkAbsoluteEncoderSim(m_motor);
+    }
   }
 
-  public ArmStage(String name, ArmStageConfig config) {
-    this(name, config, () -> 0.0);
+  public void resetRelativePositionFromAbsoluteEncoder() {
+    m_relativeEncoder.setPosition(m_absoluteEncoder.getPosition() * m_config.getAbsoluteEncoderToMotorRatio());
   }
 
   public REVLibError configureAll() {
@@ -81,7 +103,7 @@ public class ArmStage extends SubsystemBase {
         m_config.getMotorConfig(), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 
-  private Command goToNumericPosition(Double position) {
+  private Command goToNumericPosition(double position) {
     m_targetPosition = position;
     return this.run(
             () -> {
@@ -160,6 +182,8 @@ public class ArmStage extends SubsystemBase {
   public void periodic() {
     Telemetry.setValue("Arm/" + m_name + "/RelativePosition", m_relativeEncoder.getPosition());
     Telemetry.setValue("Arm/" + m_name + "/AbsolutePosition", m_absoluteEncoder.getPosition());
+    Telemetry.setValue("Arm/" + m_name + "/AbsolutePositionAtMotor", m_absoluteEncoder.getPosition() * m_config.getAbsoluteEncoderToMotorRatio());
+    Telemetry.setValue("Arm/" + m_name + "/AdjustedPosition", adjustedPosition.getAsDouble());
     Telemetry.setValue("Arm/" + m_name + "/RelativeVelocityRPM", m_relativeEncoder.getVelocity());
     Telemetry.setValue("Arm/" + m_name + "/TargetPosition", m_targetPosition);
     Telemetry.setValue("Arm/" + m_name + "/Output", m_motor.getAppliedOutput());
@@ -170,5 +194,24 @@ public class ArmStage extends SubsystemBase {
     Telemetry.setValue("Arm/" + m_name + "/VoltageIn", m_motor.getBusVoltage());
 
     Telemetry.setValue("Arm/" + m_name + "/TotalCurrentDraw", totalCurrentDraw.getAsDouble());
+  }
+
+  @Override
+  public void simulationPeriodic() {
+    // In this method, we update our simulation of what our arm is doing
+    // First, we set our "inputs" (voltages)
+    m_simArm.setInput(m_simMotor.getAppliedOutput() * RoboRioSim.getVInVoltage());
+
+    // Next, we update it. The standard loop time is 20ms.
+    m_simArm.update(0.02);
+
+    // Now, we update the Spark
+    m_simMotor.iterate(
+        Units.radiansPerSecondToRotationsPerMinute(m_simArm.getVelocityRadPerSec()),
+        RoboRioSim.getVInVoltage(), // Simulated battery voltage, in Volts
+        0.02); // Time interval, in Seconds
+
+    // Finally, we set our simulated encoder's position
+    m_simAbsoluteEncoder.setPosition(Units.radiansToRotations(m_simArm.getAngleRads()) / m_config.getAbsoluteEncoderToMotorRatio());
   }
 }

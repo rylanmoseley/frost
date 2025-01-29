@@ -1,10 +1,15 @@
 package frc.robot.subsystems.Arm;
 
+import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Configs;
+import frc.robot.Configs.Arm;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.ArmConstants.ArmStagesConstants;
 import frc.robot.Constants.ArmConstants.Mode;
+import frc.robot.Constants.ArmConstants.SimulationConstants;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
@@ -18,8 +23,38 @@ public class ArmSubsystem extends SubsystemBase {
 
   private Claw m_claw = new Claw();
   private ArmStage m_stage1 = new ArmStage("Stage1", ArmStagesConstants.STAGE_1_CONFIG);
-  private ArmStage m_stage2 = new ArmStage("Stage2", ArmStagesConstants.STAGE_2_CONFIG, m_stage1.adjustedPosition);
-  private ArmStage m_Stage3 = new ArmStage("Stage3", ArmStagesConstants.STAGE_3_CONFIG, m_stage2.adjustedPosition);
+  private ArmStage m_stage2 = new ArmStage("Stage2", ArmStagesConstants.STAGE_2_CONFIG);
+  private ArmStage m_Stage3 = new ArmStage("Stage3", ArmStagesConstants.STAGE_3_CONFIG);
+
+  private Mechanism2d mech2d =
+      new Mechanism2d(
+          SimulationConstants.MECHANISM2D_WIDTH, SimulationConstants.MECHANISM2D_HEIGHT);
+  private MechanismRoot2d mech2dRoot =
+      mech2d.getRoot(
+          "Arm Root",
+          SimulationConstants.MECHANISM2D_ROOT.getX(),
+          SimulationConstants.MECHANISM2D_ROOT.getY());
+  private MechanismLigament2d stage1Ligament =
+      mech2dRoot.append(
+          new MechanismLigament2d(
+              "Stage1",
+              ArmStagesConstants.STAGE_1_CONFIG.getArmLengthInches()
+                  * SimulationConstants.MECHANISM2D_PIXELS_PER_INCH,
+              0));
+  private MechanismLigament2d stage2Ligament =
+      stage1Ligament.append(
+          new MechanismLigament2d(
+              "Stage2",
+              ArmStagesConstants.STAGE_2_CONFIG.getArmLengthInches()
+                  * SimulationConstants.MECHANISM2D_PIXELS_PER_INCH,
+              0));
+  private MechanismLigament2d stage3Ligament =
+      stage2Ligament.append(
+          new MechanismLigament2d(
+              "Stage3",
+              ArmStagesConstants.STAGE_3_CONFIG.getArmLengthInches()
+                  * SimulationConstants.MECHANISM2D_PIXELS_PER_INCH,
+              0));
 
   public final DoubleSupplier totalCurrentDraw =
       () ->
@@ -54,5 +89,13 @@ public class ArmSubsystem extends SubsystemBase {
 
   public void setCubeMode() {
     setMode(Mode.CUBE);
+  }
+
+  @Override
+  public void periodic() {
+    // TODO straighten out gear ratios
+    stage1Ligament.setAngle(m_stage1.relativePosition.getAsDouble() / ArmConstants.ArmStagesConstants.STAGE_1_CONFIG.getGearRatio());
+    stage2Ligament.setAngle(m_stage2.relativePosition.getAsDouble() - m_stage1.relativePosition.getAsDouble());
+    stage3Ligament.setAngle(m_Stage3.relativePosition.getAsDouble() - m_stage2.relativePosition.getAsDouble() - m_stage1.relativePosition.getAsDouble());
   }
 }

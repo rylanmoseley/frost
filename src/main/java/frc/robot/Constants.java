@@ -38,13 +38,29 @@ public final class Constants {
 
     public static Mode DEFAULT_MODE = Mode.CUBE;
 
+    public static class SimulationConstants {
+        /** Pixels */
+        public static final double MECHANISM2D_WIDTH = 0;
+
+        /** Pixels */
+        public static final double MECHANISM2D_HEIGHT = 0;
+
+        public static final double MECHANISM2D_PIXELS_PER_INCH = 0;
+        
+        /** Pixels */
+        public static final Translation2d MECHANISM2D_ROOT = new Translation2d(0, 0);
+    }
+
     public static class ArmStagesConstants {
       public static ArmStageConfig STAGE_1_CONFIG =
-          new ArmStageConfig(0, 0, Configs.Arm.STAGE_1_CONFIG, StagePositions.STAGE_1, 0, 0);
+          new ArmStageConfig(
+              0, 0, Configs.Arm.STAGE_1_CONFIG, StagePositions.STAGE_1, 0, 0, 0, 0, 0, 0, 0, 0);
       public static ArmStageConfig STAGE_2_CONFIG =
-          new ArmStageConfig(0, 0, Configs.Arm.STAGE_2_CONFIG, StagePositions.STAGE_2, 0, 0);
+          new ArmStageConfig(
+              0, 0, Configs.Arm.STAGE_2_CONFIG, StagePositions.STAGE_2, 0, 0, 0, 0, 0, 0, 0, 0);
       public static ArmStageConfig STAGE_3_CONFIG =
-          new ArmStageConfig(0, 0, Configs.Arm.STAGE_3_CONFIG, StagePositions.STAGE_3, 0, 0);
+          new ArmStageConfig(
+              0, 0, Configs.Arm.STAGE_3_CONFIG, StagePositions.STAGE_3, 0, 0, 0, 0, 0, 0, 0, 0);
 
       public enum POSITIONS {
         IDLE {
