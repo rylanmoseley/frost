@@ -9,10 +9,13 @@ import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkRelativeEncoder;
+import edu.wpi.first.networktables.NetworkTableType;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ArmConstants.ArmStagesConstants.POSITIONS;
+import frc.robot.utilities.Telemetry;
 import java.util.function.DoubleSupplier;
 
 public class ArmStage extends SubsystemBase {
@@ -21,6 +24,7 @@ public class ArmStage extends SubsystemBase {
   private SparkRelativeEncoder m_relativeEncoder;
   private SparkAbsoluteEncoder m_absoluteEncoder;
   private ArmStageConfig m_config;
+  private String m_name;
 
   private double m_targetPosition;
 
@@ -34,13 +38,31 @@ public class ArmStage extends SubsystemBase {
   public Trigger notMoving =
       new Trigger(() -> Math.abs(m_relativeEncoder.getVelocity()) < m_config.getVelocityMargin());
 
-  public ArmStage(ArmStageConfig config) {
+  public final DoubleSupplier totalCurrentDraw = () -> m_motor.getOutputCurrent();
+
+  public ArmStage(String name, ArmStageConfig config) {
+    super(name);
+    m_name = name;
     m_config = config;
 
     m_motor = new SparkMax(config.getCanID(), MotorType.kBrushless);
     m_relativeEncoder = (SparkRelativeEncoder) m_motor.getEncoder();
     m_absoluteEncoder = m_motor.getAbsoluteEncoder();
     m_controller = m_motor.getClosedLoopController();
+
+    System.out.println("ArmStage " + m_name + " instantiated");
+
+    Telemetry.addValue("Arm/" + m_name + "/RelativePosition", NetworkTableType.kDouble);
+    Telemetry.addValue("Arm/" + m_name + "/AbsolutePosition", NetworkTableType.kDouble);
+    Telemetry.addValue("Arm/" + m_name + "/RelativeVelocityRPM", NetworkTableType.kDouble);
+    Telemetry.addValue("Arm/" + m_name + "/TargetPosition", NetworkTableType.kDouble);
+    Telemetry.addValue("Arm/" + m_name + "/Output", NetworkTableType.kDouble);
+    Telemetry.addValue("Arm/" + m_name + "/CurrentDraw", NetworkTableType.kDouble);
+    Telemetry.addValue("Arm/" + m_name + "/Temperature", NetworkTableType.kDouble);
+    Telemetry.addValue("Arm/" + m_name + "/HasFault", NetworkTableType.kDouble);
+    Telemetry.addValue("Arm/" + m_name + "/VoltageIn", NetworkTableType.kDouble);
+
+    Telemetry.addValue("Arm/" + m_name + "/TotalCurrentDraw", NetworkTableType.kDouble);
   }
 
   public REVLibError configureAll() {
@@ -55,7 +77,8 @@ public class ArmStage extends SubsystemBase {
               m_controller.setReference(m_targetPosition, ControlType.kMAXMotionPositionControl);
             })
         .until(atPosition.and(notMoving))
-        .withName("Go to manual position " + position);
+        .withInterruptBehavior(InterruptionBehavior.kCancelSelf)
+        .withName("Go to numeric position " + position);
   }
 
   private Command goToNamedPositionCommand(POSITIONS position) {
@@ -118,6 +141,23 @@ public class ArmStage extends SubsystemBase {
               m_controller.setReference(m_targetPosition, ControlType.kMAXMotionPositionControl);
             })
         .repeatedly()
+        .withInterruptBehavior(InterruptionBehavior.kCancelSelf)
         .withName("Manual control");
+  }
+
+  @Override
+  public void periodic() {
+    Telemetry.setValue("Arm/" + m_name + "/RelativePosition", m_relativeEncoder.getPosition());
+    Telemetry.setValue("Arm/" + m_name + "/AbsolutePosition", m_absoluteEncoder.getPosition());
+    Telemetry.setValue("Arm/" + m_name + "/RelativeVelocityRPM", m_relativeEncoder.getVelocity());
+    Telemetry.setValue("Arm/" + m_name + "/TargetPosition", m_targetPosition);
+    Telemetry.setValue("Arm/" + m_name + "/Output", m_motor.getAppliedOutput());
+    Telemetry.setValue("Arm/" + m_name + "/CurrentDraw", m_motor.getOutputCurrent());
+    Telemetry.setValue("Arm/" + m_name + "/Temperature", m_motor.getMotorTemperature());
+    Telemetry.setValue("Arm/" + m_name + "/HasFault", m_motor.hasActiveFault());
+    Telemetry.setValue("Arm/" + m_name + "/HasStickyFault", m_motor.hasStickyFault());
+    Telemetry.setValue("Arm/" + m_name + "/VoltageIn", m_motor.getBusVoltage());
+
+    Telemetry.setValue("Arm/" + m_name + "/TotalCurrentDraw", totalCurrentDraw.getAsDouble());
   }
 }

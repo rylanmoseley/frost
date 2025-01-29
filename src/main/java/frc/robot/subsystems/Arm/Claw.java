@@ -310,10 +310,10 @@ public class Claw extends SubsystemBase {
         .withInterruptBehavior(InterruptionBehavior.kCancelSelf);
   }
 
-  // on idle, stop rollers and close claw
+  // on idle, stop rollers and open claw
   public Command idleCommand() {
     return stopRollersCommand()
-        .andThen(closeClawCommand())
+        .andThen(openClawCommand())
         .andThen(
             this.run(
                     () -> {
@@ -355,7 +355,9 @@ public class Claw extends SubsystemBase {
     Telemetry.setValue("Arm/Claw/Roller/LeftVoltageIn", m_rollerLeft.getBusVoltage());
     Telemetry.setValue("Arm/Claw/Roller/RightVoltageIn", m_rollerRight.getBusVoltage());
     Telemetry.setValue("Arm/Claw/Roller/LeftHasFault", m_rollerLeft.hasActiveFault());
+    Telemetry.setValue("Arm/Claw/Roller/LeftHasStickyFault", m_rollerLeft.hasStickyFault());
     Telemetry.setValue("Arm/Claw/Roller/RightHasFault", m_rollerRight.hasActiveFault());
+    Telemetry.setValue("Arm/Claw/Roller/RightHasStickyFault", m_rollerRight.hasStickyFault());
     Telemetry.setValue("Arm/Claw/Roller/LeftVelocityRPM", m_rollerLeftEncoder.getVelocity());
     Telemetry.setValue("Arm/Claw/Roller/RightVelocityRPM", m_rollerRightEncoder.getVelocity());
 
