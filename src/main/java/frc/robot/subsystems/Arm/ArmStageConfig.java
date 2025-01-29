@@ -10,13 +10,17 @@ public class ArmStageConfig {
   private SparkMaxConfig m_motorConfig;
   private Map<POSITIONS, Double> m_positionMap;
   private double m_gearRatio;
+  private double m_positionMargin;
+  private double m_velocityMargin;
 
   public ArmStageConfig(
-      int canID, double gearRatio, SparkMaxConfig motorConfig, Map<POSITIONS, Double> positionMap) {
+      int canID, double gearRatio, SparkMaxConfig motorConfig, Map<POSITIONS, Double> positionMap, double positionMargin, double velocityMargin) {
     m_canID = canID;
     m_motorConfig = motorConfig;
     m_gearRatio = gearRatio;
     m_positionMap = positionMap;
+    m_positionMargin = positionMargin;
+    m_velocityMargin = velocityMargin;
   }
 
   /** Motor CAN ID */
@@ -39,5 +43,13 @@ public class ArmStageConfig {
 
   public Map<POSITIONS, Double> getPositionMap() {
     return m_positionMap;
+  }
+
+  public double getPositionMargin() {
+    return m_positionMargin;
+  }
+
+  public double getVelocityMargin() {
+    return m_velocityMargin;
   }
 }

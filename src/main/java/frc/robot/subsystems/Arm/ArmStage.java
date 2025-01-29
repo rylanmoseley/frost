@@ -11,6 +11,7 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkRelativeEncoder;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ArmConstants.ArmStagesConstants.POSITIONS;
 import java.util.function.DoubleSupplier;
 
@@ -21,8 +22,17 @@ public class ArmStage extends SubsystemBase {
   private SparkAbsoluteEncoder m_absoluteEncoder;
   private ArmStageConfig m_config;
 
+  private double m_targetPosition;
+
   public DoubleSupplier relativePosition = () -> m_relativeEncoder.getPosition();
   public DoubleSupplier absolutePosition = () -> m_absoluteEncoder.getPosition();
+  public Trigger atPosition =
+      new Trigger(
+          () ->
+              Math.abs(m_targetPosition - m_relativeEncoder.getPosition())
+                  < m_config.getPositionMargin());
+  public Trigger notMoving =
+      new Trigger(() -> Math.abs(m_relativeEncoder.getVelocity()) < m_config.getVelocityMargin());
 
   public ArmStage(ArmStageConfig config) {
     m_config = config;
@@ -38,12 +48,76 @@ public class ArmStage extends SubsystemBase {
         m_config.getMotorConfig(), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 
-  private Command goToPositionCommand(POSITIONS position) {
+  private Command goToNumericPosition(Double position) {
+    m_targetPosition = position;
     return this.run(
             () -> {
-              m_controller.setReference(
-                  m_config.getPositionMap().get(position), ControlType.kMAXMotionPositionControl);
+              m_controller.setReference(m_targetPosition, ControlType.kMAXMotionPositionControl);
             })
-        .withName("Go to position " + position);
+        .until(atPosition.and(notMoving))
+        .withName("Go to manual position " + position);
+  }
+
+  private Command goToNamedPositionCommand(POSITIONS position) {
+    return goToNumericPosition(m_config.getPositionMap().get(position))
+        .withName("Go to " + position);
+  }
+
+  public Command goToIdlePositionCommand() {
+    return goToNamedPositionCommand(POSITIONS.IDLE);
+  }
+
+  public Command goToHighCubePositionCommand() {
+    return goToNamedPositionCommand(POSITIONS.HIGH_CUBE);
+  }
+
+  public Command goToHighConePositionCommand() {
+    return goToNamedPositionCommand(POSITIONS.HIGH_CONE);
+  }
+
+  public Command goToMidCubePositionCommand() {
+    return goToNamedPositionCommand(POSITIONS.MID_CUBE);
+  }
+
+  public Command goToMidConePositionCommand() {
+    return goToNamedPositionCommand(POSITIONS.MID_CONE);
+  }
+
+  public Command goToLowCubePositionCommand() {
+    return goToNamedPositionCommand(POSITIONS.LOW_CUBE);
+  }
+
+  public Command goToLowConePositionCommand() {
+    return goToNamedPositionCommand(POSITIONS.LOW_CONE);
+  }
+
+  public Command goToSubstationPositionCommand() {
+    return goToNamedPositionCommand(POSITIONS.SUBSTATION);
+  }
+
+  public Command goToGroundPositionCommand() {
+    return goToNamedPositionCommand(POSITIONS.GROUND);
+  }
+
+  public Command goToGroundTiltPositionCommand() {
+    return goToNamedPositionCommand(POSITIONS.GROUND_TILT);
+  }
+
+  public Command goToPosition(double position) {
+    return goToNumericPosition(position);
+  }
+
+  public Command holdCurrentPositionCommand() {
+    return goToNumericPosition(m_targetPosition).repeatedly().withName("Hold current position");
+  }
+
+  public Command manualControlCommand(DoubleSupplier target) {
+    return this.run(
+            () -> {
+              m_targetPosition = target.getAsDouble();
+              m_controller.setReference(m_targetPosition, ControlType.kMAXMotionPositionControl);
+            })
+        .repeatedly()
+        .withName("Manual control");
   }
 }

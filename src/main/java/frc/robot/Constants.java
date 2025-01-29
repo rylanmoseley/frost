@@ -40,11 +40,11 @@ public final class Constants {
 
     public static class ArmStagesConstants {
       public static ArmStageConfig STAGE_1_CONFIG =
-          new ArmStageConfig(0, 0, Configs.Arm.STAGE_1_CONFIG, StagePositions.STAGE_1);
+          new ArmStageConfig(0, 0, Configs.Arm.STAGE_1_CONFIG, StagePositions.STAGE_1, 0, 0);
       public static ArmStageConfig STAGE_2_CONFIG =
-          new ArmStageConfig(0, 0, Configs.Arm.STAGE_2_CONFIG, StagePositions.STAGE_2);
+          new ArmStageConfig(0, 0, Configs.Arm.STAGE_2_CONFIG, StagePositions.STAGE_2, 0, 0);
       public static ArmStageConfig STAGE_3_CONFIG =
-          new ArmStageConfig(0, 0, Configs.Arm.STAGE_3_CONFIG, StagePositions.STAGE_3);
+          new ArmStageConfig(0, 0, Configs.Arm.STAGE_3_CONFIG, StagePositions.STAGE_3, 0, 0);
 
       public enum POSITIONS {
         IDLE {
