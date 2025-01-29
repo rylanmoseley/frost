@@ -95,7 +95,8 @@ public class ArmStage extends SubsystemBase {
   }
 
   public void resetRelativePositionFromAbsoluteEncoder() {
-    m_relativeEncoder.setPosition(m_absoluteEncoder.getPosition() * m_config.getAbsoluteEncoderToMotorRatio());
+    m_relativeEncoder.setPosition(
+        m_absoluteEncoder.getPosition() * m_config.getAbsoluteEncoderToMotorRatio());
   }
 
   public REVLibError configureAll() {
@@ -182,7 +183,9 @@ public class ArmStage extends SubsystemBase {
   public void periodic() {
     Telemetry.setValue("Arm/" + m_name + "/RelativePosition", m_relativeEncoder.getPosition());
     Telemetry.setValue("Arm/" + m_name + "/AbsolutePosition", m_absoluteEncoder.getPosition());
-    Telemetry.setValue("Arm/" + m_name + "/AbsolutePositionAtMotor", m_absoluteEncoder.getPosition() * m_config.getAbsoluteEncoderToMotorRatio());
+    Telemetry.setValue(
+        "Arm/" + m_name + "/AbsolutePositionAtMotor",
+        m_absoluteEncoder.getPosition() * m_config.getAbsoluteEncoderToMotorRatio());
     Telemetry.setValue("Arm/" + m_name + "/AdjustedPosition", adjustedPosition.getAsDouble());
     Telemetry.setValue("Arm/" + m_name + "/RelativeVelocityRPM", m_relativeEncoder.getVelocity());
     Telemetry.setValue("Arm/" + m_name + "/TargetPosition", m_targetPosition);
@@ -212,6 +215,8 @@ public class ArmStage extends SubsystemBase {
         0.02); // Time interval, in Seconds
 
     // Finally, we set our simulated encoder's position
-    m_simAbsoluteEncoder.setPosition(Units.radiansToRotations(m_simArm.getAngleRads()) / m_config.getAbsoluteEncoderToMotorRatio());
+    m_simAbsoluteEncoder.setPosition(
+        Units.radiansToRotations(m_simArm.getAngleRads())
+            / m_config.getAbsoluteEncoderToMotorRatio());
   }
 }

@@ -39,16 +39,16 @@ public final class Constants {
     public static Mode DEFAULT_MODE = Mode.CUBE;
 
     public static class SimulationConstants {
-        /** Pixels */
-        public static final double MECHANISM2D_WIDTH = 0;
+      /** Pixels */
+      public static final double MECHANISM2D_WIDTH = 0;
 
-        /** Pixels */
-        public static final double MECHANISM2D_HEIGHT = 0;
+      /** Pixels */
+      public static final double MECHANISM2D_HEIGHT = 0;
 
-        public static final double MECHANISM2D_PIXELS_PER_INCH = 0;
-        
-        /** Pixels */
-        public static final Translation2d MECHANISM2D_ROOT = new Translation2d(0, 0);
+      public static final double MECHANISM2D_PIXELS_PER_INCH = 0;
+
+      /** Pixels */
+      public static final Translation2d MECHANISM2D_ROOT = new Translation2d(0, 0);
     }
 
     public static class ArmStagesConstants {

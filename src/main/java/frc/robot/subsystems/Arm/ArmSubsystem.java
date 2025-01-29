@@ -5,7 +5,6 @@ import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Configs;
-import frc.robot.Configs.Arm;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.ArmConstants.ArmStagesConstants;
 import frc.robot.Constants.ArmConstants.Mode;
@@ -94,8 +93,14 @@ public class ArmSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // TODO straighten out gear ratios
-    stage1Ligament.setAngle(m_stage1.relativePosition.getAsDouble() / ArmConstants.ArmStagesConstants.STAGE_1_CONFIG.getGearRatio());
-    stage2Ligament.setAngle(m_stage2.relativePosition.getAsDouble() - m_stage1.relativePosition.getAsDouble());
-    stage3Ligament.setAngle(m_Stage3.relativePosition.getAsDouble() - m_stage2.relativePosition.getAsDouble() - m_stage1.relativePosition.getAsDouble());
+    stage1Ligament.setAngle(
+        m_stage1.relativePosition.getAsDouble()
+            / ArmConstants.ArmStagesConstants.STAGE_1_CONFIG.getGearRatio());
+    stage2Ligament.setAngle(
+        m_stage2.relativePosition.getAsDouble() - m_stage1.relativePosition.getAsDouble());
+    stage3Ligament.setAngle(
+        m_Stage3.relativePosition.getAsDouble()
+            - m_stage2.relativePosition.getAsDouble()
+            - m_stage1.relativePosition.getAsDouble());
   }
 }

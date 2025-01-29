@@ -1,7 +1,6 @@
 package frc.robot.subsystems.Arm;
 
 import com.revrobotics.spark.config.SparkMaxConfig;
-
 import edu.wpi.first.math.util.Units;
 import frc.robot.Constants.ArmConstants.ArmStagesConstants.POSITIONS;
 import java.util.Map;
@@ -42,15 +41,15 @@ public class ArmStageConfig {
     m_absoluteEncoderDIO = absoluteEncoderDIO;
 
     m_motorConfig = motorConfig;
-    
+
     m_positionMap = positionMap;
-    
+
     m_gearRatio = gearRatio;
     m_absoluteEncoderToMotorRatio = absoluteEncoderToMotorRatio;
-    
+
     m_positionMargin = positionMargin;
     m_velocityMargin = velocityMargin;
-    
+
     m_armLength = armLength;
     m_armMass = armMass;
     m_minAngleRads = minAngleRads;
