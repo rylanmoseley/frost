@@ -5,7 +5,6 @@ import frc.robot.Configs;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.ArmConstants.ArmStagesConstants;
 import frc.robot.Constants.ArmConstants.Mode;
-
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
