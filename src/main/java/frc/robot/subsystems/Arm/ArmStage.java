@@ -1,6 +1,7 @@
 package frc.robot.subsystems.Arm;
 
 import com.revrobotics.REVLibError;
+import com.revrobotics.sim.SparkMaxSim;
 import com.revrobotics.spark.SparkAbsoluteEncoder;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
@@ -9,6 +10,7 @@ import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkRelativeEncoder;
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.networktables.NetworkTableType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
@@ -25,11 +27,13 @@ public class ArmStage extends SubsystemBase {
   private SparkAbsoluteEncoder m_absoluteEncoder;
   private ArmStageConfig m_config;
   private String m_name;
+  private DoubleSupplier m_previousStagePosition;
 
   private double m_targetPosition;
 
   public DoubleSupplier relativePosition = () -> m_relativeEncoder.getPosition();
   public DoubleSupplier absolutePosition = () -> m_absoluteEncoder.getPosition();
+  public DoubleSupplier adjustedPosition;
   public Trigger atPosition =
       new Trigger(
           () ->
@@ -40,10 +44,13 @@ public class ArmStage extends SubsystemBase {
 
   public final DoubleSupplier totalCurrentDraw = () -> m_motor.getOutputCurrent();
 
-  public ArmStage(String name, ArmStageConfig config) {
+  public ArmStage(String name, ArmStageConfig config, DoubleSupplier previousStagePosition) {
     super(name);
     m_name = name;
+    m_previousStagePosition = previousStagePosition;
     m_config = config;
+
+    adjustedPosition = () -> absolutePosition.getAsDouble() + m_previousStagePosition.getAsDouble();
 
     m_motor = new SparkMax(config.getCanID(), MotorType.kBrushless);
     m_relativeEncoder = (SparkRelativeEncoder) m_motor.getEncoder();
@@ -63,6 +70,10 @@ public class ArmStage extends SubsystemBase {
     Telemetry.addValue("Arm/" + m_name + "/VoltageIn", NetworkTableType.kDouble);
 
     Telemetry.addValue("Arm/" + m_name + "/TotalCurrentDraw", NetworkTableType.kDouble);
+  }
+
+  public ArmStage(String name, ArmStageConfig config) {
+    this(name, config, () -> 0.0);
   }
 
   public REVLibError configureAll() {

@@ -18,8 +18,8 @@ public class ArmSubsystem extends SubsystemBase {
 
   private Claw m_claw = new Claw();
   private ArmStage m_stage1 = new ArmStage("Stage1", ArmStagesConstants.STAGE_1_CONFIG);
-  private ArmStage m_stage2 = new ArmStage("Stage2", ArmStagesConstants.STAGE_2_CONFIG);
-  private ArmStage m_Stage3 = new ArmStage("Stage3", ArmStagesConstants.STAGE_3_CONFIG);
+  private ArmStage m_stage2 = new ArmStage("Stage2", ArmStagesConstants.STAGE_2_CONFIG, m_stage1.adjustedPosition);
+  private ArmStage m_Stage3 = new ArmStage("Stage3", ArmStagesConstants.STAGE_3_CONFIG, m_stage2.adjustedPosition);
 
   public final DoubleSupplier totalCurrentDraw =
       () ->
