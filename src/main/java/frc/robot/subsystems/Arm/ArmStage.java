@@ -104,8 +104,11 @@ public class ArmStage extends SubsystemBase {
   public REVLibError configureAll() {
     REVLibError error = REVLibError.kError;
     for (int tries = 0; tries < Constants.MAX_CONFIG_RETRIES; tries++) {
-      error = m_motor.configure(
-        m_config.getMotorConfig(), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+      error =
+          m_motor.configure(
+              m_config.getMotorConfig(),
+              ResetMode.kResetSafeParameters,
+              PersistMode.kPersistParameters);
       if (error == REVLibError.kOk) {
         return error;
       }
