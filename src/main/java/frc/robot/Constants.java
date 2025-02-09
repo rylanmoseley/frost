@@ -4,7 +4,12 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Hertz;
+import static edu.wpi.first.units.Units.Seconds;
+
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.units.measure.Frequency;
+import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import frc.robot.subsystems.Arm.ArmStageConfig;
@@ -26,8 +31,23 @@ public final class Constants {
     public static final int kOperatorControllerRightPort = 2;
   }
 
+  public static class PowerConstants {
+    public static class CAN {
+      public static final int PDH = 0;
+    }
+  }
+
   public static class TelemetryConstants {
     public static final String ROOT_NAME = "telemetry";
+  }
+
+  public static class LEDConstants {
+    public static final int LED_PORT = 0;
+    public static final int LED_LENGTH = 0;
+    public static final Frequency SCROLL_SPEED = Hertz.of(0);
+    public static final Frequency FAST_SCROLL_SPEED = Hertz.of(0);
+    public static final Time SHWERVE_BLINK_TIME = Seconds.of(0);
+    public static final Time SELF_DESTRUCT_BREATHE_TIME = Seconds.of(0);
   }
 
   public static class ArmConstants {
@@ -36,7 +56,7 @@ public final class Constants {
       CONE
     }
 
-    public static Mode DEFAULT_MODE = Mode.CUBE;
+    public static final Mode DEFAULT_MODE = Mode.CUBE;
 
     public static class SimulationConstants {
       /** Pixels */
@@ -52,13 +72,13 @@ public final class Constants {
     }
 
     public static class ArmStagesConstants {
-      public static ArmStageConfig STAGE_1_CONFIG =
+      public static final ArmStageConfig STAGE_1_CONFIG =
           new ArmStageConfig(
               0, 0, Configs.Arm.STAGE_1_CONFIG, StagePositions.STAGE_1, 0, 0, 0, 0, 0, 0, 0, 0);
-      public static ArmStageConfig STAGE_2_CONFIG =
+      public static final ArmStageConfig STAGE_2_CONFIG =
           new ArmStageConfig(
               0, 0, Configs.Arm.STAGE_2_CONFIG, StagePositions.STAGE_2, 0, 0, 0, 0, 0, 0, 0, 0);
-      public static ArmStageConfig STAGE_3_CONFIG =
+      public static final ArmStageConfig STAGE_3_CONFIG =
           new ArmStageConfig(
               0, 0, Configs.Arm.STAGE_3_CONFIG, StagePositions.STAGE_3, 0, 0, 0, 0, 0, 0, 0, 0);
 
@@ -144,20 +164,20 @@ public final class Constants {
     public static class ClawConstants {
 
       public static class CAN {
-        public static int ROLLER_LEFT = 0;
-        public static int ROLLER_RIGHT = 0;
-        public static int PNEUMATIC_HUB = 0;
+        public static final int ROLLER_LEFT = 0;
+        public static final int ROLLER_RIGHT = 0;
+        public static final int PNEUMATIC_HUB = 0;
       }
 
       public static class PNEUMATIC_CHANNEL {
-        public static int CLAMP_FORWARD = 0;
-        public static int CLAMP_REVERSE = 0;
+        public static final int CLAMP_FORWARD = 0;
+        public static final int CLAMP_REVERSE = 0;
 
-        public static int PRESSURE_SWITCH_PORT = 0; // analog channel
+        public static final int PRESSURE_SWITCH_PORT = 0; // analog channel
       }
 
       public static class DIO {
-        public static int BEAM_BREAK = 0;
+        public static final int BEAM_BREAK = 0;
       }
 
       public static final boolean BEAM_BREAK_BROKEN_VALUE = true;
