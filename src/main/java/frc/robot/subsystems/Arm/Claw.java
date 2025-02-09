@@ -14,6 +14,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTableType;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.PneumaticHub;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
@@ -30,6 +31,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants;
 import frc.robot.Constants.ArmConstants.ClawConstants;
 import frc.robot.Constants.ArmConstants.ClawConstants.RollerSpeeds;
 import frc.robot.Robot;
@@ -174,13 +176,24 @@ public class Claw extends SubsystemBase {
 
   public REVLibError configureAll(
       SparkMaxConfig rollerLeftConfig, SparkMaxConfig rollerRightConfig) {
+    REVLibError leftErr = REVLibError.kError;
+    REVLibError rightErr = REVLibError.kError;
 
-    REVLibError leftErr =
-        m_rollerLeft.configure(
-            rollerLeftConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-    REVLibError rightErr =
-        m_rollerRight.configure(
-            rollerRightConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    for (int i = 0; i < Constants.MAX_CONFIG_RETRIES; i++) {
+      leftErr =
+          m_rollerLeft.configure(
+              rollerLeftConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+      rightErr =
+          m_rollerRight.configure(
+              rollerRightConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
+      if (leftErr == REVLibError.kOk && rightErr == REVLibError.kOk) {
+        return rightErr;
+      }
+    }
+
+    System.out.println("Error configuring Claw: " + leftErr + ", " + rightErr);
+    DriverStation.reportError("Error configuring Claw: " + leftErr + ", " + rightErr, false);
 
     // return error, if present
     if (leftErr == REVLibError.kOk) {

@@ -14,12 +14,14 @@ import com.revrobotics.spark.SparkRelativeEncoder;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTableType;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.simulation.RoboRioSim;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants;
 import frc.robot.Constants.ArmConstants.ArmStagesConstants.POSITIONS;
 import frc.robot.Robot;
 import frc.robot.utilities.Telemetry;
@@ -100,8 +102,17 @@ public class ArmStage extends SubsystemBase {
   }
 
   public REVLibError configureAll() {
-    return m_motor.configure(
+    REVLibError error = REVLibError.kError;
+    for (int tries = 0; tries < Constants.MAX_CONFIG_RETRIES; tries++) {
+      error = m_motor.configure(
         m_config.getMotorConfig(), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+      if (error == REVLibError.kOk) {
+        return error;
+      }
+    }
+    System.out.println("Error configuring " + m_name + " :" + error);
+    DriverStation.reportError("Error configuring " + m_name + " :" + error, false);
+    return error;
   }
 
   private Command goToNumericPosition(double position) {
