@@ -51,7 +51,7 @@ public class LEDSubsystem extends SubsystemBase {
     m_led.start();
 
     enableUnderglow().run();
-    
+
     System.out.println("LED Subsystem Initialized");
 
     Telemetry.addValue("LEDs/Pattern", NetworkTableType.kString);
