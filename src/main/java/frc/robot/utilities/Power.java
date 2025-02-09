@@ -28,24 +28,12 @@ public class Power {
     return getInstance().m_pdh.getTotalCurrent();
   }
 
-  public static double getTemperature() {
-    return getInstance().m_pdh.getTemperature();
-  }
-
   public static double getCurrent(int channel) {
     return getInstance().m_pdh.getCurrent(channel);
   }
 
   public static double[] getAllCurrents() {
     return getInstance().m_pdh.getAllCurrents();
-  }
-
-  public static double getTotalPower() {
-    return getInstance().m_pdh.getTotalPower();
-  }
-
-  public static double getTotalEnergy() {
-    return getInstance().m_pdh.getTotalEnergy();
   }
 
   public static boolean getSwitchableChannel() {
