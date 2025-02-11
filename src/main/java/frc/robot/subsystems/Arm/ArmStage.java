@@ -112,6 +112,7 @@ public class ArmStage extends SubsystemBase {
       if (error == REVLibError.kOk) {
         return error;
       }
+      DriverStation.reportWarning("Warning: Failure configuring " + m_name + " :" + error, false);
     }
     System.out.println("Error configuring " + m_name + " :" + error);
     DriverStation.reportError("Error configuring " + m_name + " :" + error, false);

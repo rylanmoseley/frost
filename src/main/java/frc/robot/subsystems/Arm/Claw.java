@@ -190,6 +190,8 @@ public class Claw extends SubsystemBase {
       if (leftErr == REVLibError.kOk && rightErr == REVLibError.kOk) {
         return rightErr;
       }
+      DriverStation.reportWarning(
+          "Warning: Failure configuring Claw: " + leftErr + ", " + rightErr, false);
     }
 
     System.out.println("Error configuring Claw: " + leftErr + ", " + rightErr);
