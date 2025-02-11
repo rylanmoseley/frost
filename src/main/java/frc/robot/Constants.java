@@ -4,7 +4,13 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.DegreesPerSecond;
+
+import com.ctre.phoenix6.CANBus;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 
@@ -103,6 +109,18 @@ public final class Constants {
         /** Inches */
         public static final double MECHANISM2D_ROLLER_RADIUS = 0;
       }
+    }
+  }
+
+  public static class SwerveConstants {
+    public static class CAN {
+      public static final CANBus DRIVETRAIN_CANBUS = new CANBus("drivetrain");
+      public static final int PIGEON = 0;
+    }
+
+    public static class GyroConstants {
+      public static final Angle GYRO_ANGLE_TOLERANCE = Degrees.of(0);
+      public static final AngularVelocity GYRO_VELOCITY_TOLERANCE = DegreesPerSecond.of(0);
     }
   }
 }
