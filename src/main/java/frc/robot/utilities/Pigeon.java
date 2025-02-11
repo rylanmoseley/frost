@@ -5,7 +5,7 @@ import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.Fahrenheit;
 import static edu.wpi.first.units.Units.Volts;
 
-import com.ctre.phoenix6.configs.Pigeon2Configuration;
+import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.networktables.NetworkTableType;
@@ -13,8 +13,11 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Configs;
+import frc.robot.Constants;
 import frc.robot.Constants.SwerveConstants.CAN;
 import frc.robot.Constants.SwerveConstants.GyroConstants;
 import java.util.function.Supplier;
@@ -48,8 +51,7 @@ public class Pigeon extends SubsystemBase {
     voltageSupplier = pigeon.getSupplyVoltage().asSupplier();
     temperatureSupplier = pigeon.getTemperature().asSupplier();
 
-    // factory default
-    pigeon.getConfigurator().apply(new Pigeon2Configuration());
+    configAll();
 
     // initialize to zero
     pigeon.setYaw(0);
@@ -66,6 +68,22 @@ public class Pigeon extends SubsystemBase {
     Telemetry.addValue("Pigeon/StickyFaults", NetworkTableType.kDouble);
     Telemetry.addValue("Pigeon/SupplyVoltage", NetworkTableType.kDouble);
     Telemetry.addValue("Pigeon/Temperature", NetworkTableType.kDouble);
+  }
+
+  // called automatically in constructor
+  public StatusCode configAll() {
+    StatusCode status = StatusCode.GeneralError;
+    for (int tries = 0; tries < Constants.MAX_CONFIG_RETRIES; tries++) {
+      status = pigeon.getConfigurator().apply(Configs.Drive.PIGEON_CONFIG);
+
+      if (status == StatusCode.OK) {
+        return status;
+      }
+      DriverStation.reportWarning("Warning: Failure configuring Pigeon: " + status, false);
+    }
+    System.out.println("Error configuring Pigeon: " + status);
+    DriverStation.reportError("Error configuring Pigeon: " + status, false);
+    return status;
   }
 
   public static Trigger rollZero =

@@ -23,6 +23,8 @@ import edu.wpi.first.wpilibj.util.Color8Bit;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+  public static int MAX_CONFIG_RETRIES = 5;
+  
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
     public static final int kOperatorControllerLeftPort = 1;

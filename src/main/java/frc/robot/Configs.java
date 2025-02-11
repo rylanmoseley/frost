@@ -1,5 +1,6 @@
 package frc.robot;
 
+import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 public final class Configs {
@@ -14,5 +15,10 @@ public final class Configs {
     }
   }
 
-  public static final class Drive {}
+  public static final class Drive {
+    public static final Pigeon2Configuration PIGEON_CONFIG = new Pigeon2Configuration();
+
+    static {
+    }
+  }
 }
