@@ -17,6 +17,16 @@ import edu.wpi.first.wpilibj.util.Color8Bit;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+
+  public static class DashboardConstants {
+    public static final boolean DASHBOARD_ENABLED = true;
+    public static final String DASHBOARD_PATH = "dashboard";
+    public static final int DASHBOARD_PORT = 5800;
+    public static final boolean DEPLOY_SERVER_ENABLED = false;
+    public static final String DEPLOY_SERVER_PATH = "";
+    public static final int DEPLOY_SERVER_PORT = 5801;
+  }
+
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
     public static final int kOperatorControllerLeftPort = 1;

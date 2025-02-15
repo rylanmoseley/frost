@@ -4,12 +4,15 @@
 
 package frc.robot;
 
+import edu.wpi.first.net.WebServer;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.DashboardConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.subsystems.Arm.ArmSubsystem;
 import frc.robot.subsystems.LEDSubsystem;
@@ -39,6 +42,20 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+
+    // start dashboard webserver
+    if (DashboardConstants.DASHBOARD_ENABLED) {
+      WebServer.start(
+          DashboardConstants.DASHBOARD_PORT,
+          Filesystem.getDeployDirectory() + "/" + DashboardConstants.DASHBOARD_PATH);
+    }
+    // host deploy directory webserver
+    if (DashboardConstants.DEPLOY_SERVER_ENABLED) {
+      WebServer.start(
+          DashboardConstants.DEPLOY_SERVER_PORT,
+          Filesystem.getDeployDirectory() + "/" + DashboardConstants.DEPLOY_SERVER_PATH);
+    }
+
     // Configure the trigger bindings
     configureBindings();
 
