@@ -14,6 +14,7 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.subsystems.Arm.ArmSubsystem;
 import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.Swerve.SwerveSubsystem;
+import frc.robot.utilities.CommandDriverController;
 import frc.robot.utilities.CommandOperatorController;
 import java.util.function.DoubleSupplier;
 
@@ -29,8 +30,8 @@ public class RobotContainer {
   private SwerveSubsystem m_swerveSubsystem = new SwerveSubsystem();
   private LEDSubsystem m_LEDSubsystem = new LEDSubsystem();
 
-  private final CommandXboxController m_driverController =
-      new CommandXboxController(OperatorConstants.kDriverControllerPort);
+  private final CommandDriverController m_driverController =
+      new CommandDriverController(OperatorConstants.kDriverControllerPort);
 
   private final CommandOperatorController m_operatorController =
       new CommandOperatorController(

@@ -4,14 +4,30 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.DegreesPerSecond;
+import static edu.wpi.first.units.Units.FeetPerSecond;
+import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.Hertz;
 import static edu.wpi.first.units.Units.Seconds;
 
+import com.ctre.phoenix6.CANBus;
+import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Frequency;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.util.Color8Bit;
+import frc.robot.subsystems.Swerve.SwerveModuleConfig;
 import frc.robot.subsystems.Arm.ArmStageConfig;
 import java.util.HashMap;
 import java.util.Map;
@@ -231,6 +247,57 @@ public final class Constants {
         /** Inches */
         public static final double MECHANISM2D_ROLLER_RADIUS = 0;
       }
+    }
+  }
+
+  public static class SwerveConstants {
+    public static class CAN {
+      public static final CANBus DRIVETRAIN_CANBUS = new CANBus("drivetrain");
+      public static final int PIGEON = 0;
+    }
+
+    public static class GyroConstants {
+      public static final Angle GYRO_ANGLE_TOLERANCE = Degrees.of(0);
+      public static final AngularVelocity GYRO_VELOCITY_TOLERANCE = DegreesPerSecond.of(0);
+    }
+
+    public static final SwerveModuleConfig FRONT_LEFT_CONFIG = new SwerveModuleConfig();
+    public static final SwerveModuleConfig FRONT_RIGHT_CONFIG = new SwerveModuleConfig();
+    public static final SwerveModuleConfig BACK_LEFT_CONFIG = new SwerveModuleConfig();
+    public static final SwerveModuleConfig BACK_RIGHT_CONFIG = new SwerveModuleConfig();
+
+    public static final Distance WIDTH = Inches.of(0);
+    public static final Distance LENGTH = Inches.of(0);
+    public static final SwerveDriveKinematics KINEMATICS =
+        new SwerveDriveKinematics(
+            new Translation2d(WIDTH.div(2), LENGTH.div(2)),
+            new Translation2d(WIDTH.div(2), LENGTH.div(2).unaryMinus()),
+            new Translation2d(WIDTH.div(2).unaryMinus(), LENGTH.div(2)),
+            new Translation2d(WIDTH.div(2).unaryMinus(), LENGTH.div(2).unaryMinus()));
+
+    public static RobotConfig robotConfig;
+    public static final PPHolonomicDriveController HOLONOMIC_DRIVE_CONTROLLER =
+        new PPHolonomicDriveController( // TODO tune
+            new PIDConstants(0, 0, 0),
+            new PIDConstants(0, 0, 0));
+
+    static {
+      try {
+        robotConfig = RobotConfig.fromGUISettings();
+      } catch (Exception e) {
+        DriverStation.reportError("Failed to load robot config, loading default", false);
+        // TODO default config
+        robotConfig =
+            new RobotConfig(MAX_CONFIG_RETRIES, MAX_CONFIG_RETRIES, null, MAX_CONFIG_RETRIES);
+      }
+    }
+
+    public static class ModuleConstants {
+      public static final double DRIVE_GEAR_RATIO = 0;
+      public static final Distance WHEEL_DIAMETER = Inches.of(0);
+      public static final Distance WHEEL_CIRCUMFERENCE = WHEEL_DIAMETER.times(Math.PI);
+      public static final AngularVelocity MAX_MOTOR_SPEED = RPM.of(0);
+      public static final LinearVelocity MAX_STRAFE_SPEED = FeetPerSecond.of(0);
     }
   }
 }
