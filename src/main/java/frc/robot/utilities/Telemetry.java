@@ -815,7 +815,7 @@ public class Telemetry {
       DriverStation.reportWarning(
           "Telemetry: entry " + name + " does not exist, creating with type double", false);
       System.out.println("Telemetry: entry " + name + " does not exist, creating with type double");
-      addValue(name, NetworkTableType.kDouble);
+      addReadableValue(name, NetworkTableType.kDouble);
     }
 
     TelemetryItem item = table.entries.get(name);
@@ -849,7 +849,7 @@ public class Telemetry {
           "Telemetry: entry " + name + " does not exist, creating with type boolean", false);
       System.out.println(
           "Telemetry: entry " + name + " does not exist, creating with type boolean");
-      addValue(name, NetworkTableType.kBoolean);
+      addReadableValue(name, NetworkTableType.kBoolean);
     }
 
     TelemetryItem item = table.entries.get(name);
@@ -884,7 +884,7 @@ public class Telemetry {
           "Telemetry: entry " + name + " does not exist, creating with type double[]", false);
       System.out.println(
           "Telemetry: entry " + name + " does not exist, creating with type double[]");
-      addValue(name, NetworkTableType.kDoubleArray);
+      addReadableValue(name, NetworkTableType.kDoubleArray);
     }
 
     TelemetryItem item = table.entries.get(name);
@@ -919,7 +919,7 @@ public class Telemetry {
           "Telemetry: entry " + name + " does not exist, creating with type boolean[]", false);
       System.out.println(
           "Telemetry: entry " + name + " does not exist, creating with type boolean[]");
-      addValue(name, NetworkTableType.kBooleanArray);
+      addReadableValue(name, NetworkTableType.kBooleanArray);
     }
 
     TelemetryItem item = table.entries.get(name);
@@ -953,7 +953,7 @@ public class Telemetry {
       DriverStation.reportWarning(
           "Telemetry: entry " + name + " does not exist, creating with type float", false);
       System.out.println("Telemetry: entry " + name + " does not exist, creating with type float");
-      addValue(name, NetworkTableType.kFloat);
+      addReadableValue(name, NetworkTableType.kFloat);
     }
 
     TelemetryItem item = table.entries.get(name);
@@ -988,7 +988,7 @@ public class Telemetry {
           "Telemetry: entry " + name + " does not exist, creating with type float[]", false);
       System.out.println(
           "Telemetry: entry " + name + " does not exist, creating with type float[]");
-      addValue(name, NetworkTableType.kFloatArray);
+      addReadableValue(name, NetworkTableType.kFloatArray);
     }
 
     TelemetryItem item = table.entries.get(name);
@@ -1022,7 +1022,7 @@ public class Telemetry {
       DriverStation.reportWarning(
           "Telemetry: entry " + name + " does not exist, creating with type int", false);
       System.out.println("Telemetry: entry " + name + " does not exist, creating with type int");
-      addValue(name, NetworkTableType.kInteger);
+      addReadableValue(name, NetworkTableType.kInteger);
     }
 
     TelemetryItem item = table.entries.get(name);
@@ -1056,7 +1056,7 @@ public class Telemetry {
       DriverStation.reportWarning(
           "Telemetry: entry " + name + " does not exist, creating with type int[]", false);
       System.out.println("Telemetry: entry " + name + " does not exist, creating with type int[]");
-      addValue(name, NetworkTableType.kIntegerArray);
+      addReadableValue(name, NetworkTableType.kIntegerArray);
     }
 
     TelemetryItem item = table.entries.get(name);
@@ -1090,7 +1090,7 @@ public class Telemetry {
       DriverStation.reportWarning(
           "Telemetry: entry " + name + " does not exist, creating with type String", false);
       System.out.println("Telemetry: entry " + name + " does not exist, creating with type String");
-      addValue(name, NetworkTableType.kString);
+      addReadableValue(name, NetworkTableType.kString);
     }
 
     TelemetryItem item = table.entries.get(name);
@@ -1125,7 +1125,7 @@ public class Telemetry {
           "Telemetry: entry " + name + " does not exist, creating with type String[]", false);
       System.out.println(
           "Telemetry: entry " + name + " does not exist, creating with type String[]");
-      addValue(name, NetworkTableType.kStringArray);
+      addReadableValue(name, NetworkTableType.kStringArray);
     }
 
     TelemetryItem item = table.entries.get(name);
@@ -1159,7 +1159,7 @@ public class Telemetry {
       DriverStation.reportWarning(
           "Telemetry: entry " + name + " does not exist, creating with type byte[]", false);
       System.out.println("Telemetry: entry " + name + " does not exist, creating with type byte[]");
-      addValue(name, NetworkTableType.kRaw);
+      addReadableValue(name, NetworkTableType.kRaw);
     }
 
     TelemetryItem item = table.entries.get(name);

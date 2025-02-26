@@ -46,12 +46,24 @@ public class RobotContainer {
 
     // start dashboard webserver
     if (DashboardConstants.DASHBOARD_ENABLED) {
+      System.out.println("Starting Dashboard Webserver");
+      System.out.println(
+          "Dashboard directory"
+              + Filesystem.getDeployDirectory()
+              + "/"
+              + DashboardConstants.DASHBOARD_PATH);
       WebServer.start(
           DashboardConstants.DASHBOARD_PORT,
           Filesystem.getDeployDirectory() + "/" + DashboardConstants.DASHBOARD_PATH);
     }
     // host deploy directory webserver
     if (DashboardConstants.DEPLOY_SERVER_ENABLED) {
+      System.out.println("Starting Deploy Webserver");
+      System.out.println(
+          "Deploy directory"
+              + Filesystem.getDeployDirectory()
+              + "/"
+              + DashboardConstants.DEPLOY_SERVER_PATH);
       WebServer.start(
           DashboardConstants.DEPLOY_SERVER_PORT,
           Filesystem.getDeployDirectory() + "/" + DashboardConstants.DEPLOY_SERVER_PATH);
