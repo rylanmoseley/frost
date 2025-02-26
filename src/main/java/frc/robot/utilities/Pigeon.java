@@ -51,7 +51,7 @@ public class Pigeon extends SubsystemBase {
     voltageSupplier = pigeon.getSupplyVoltage().asSupplier();
     temperatureSupplier = pigeon.getTemperature().asSupplier();
 
-    configAll();
+    configureAll();
 
     // initialize to zero
     pigeon.setYaw(0);
@@ -71,7 +71,7 @@ public class Pigeon extends SubsystemBase {
   }
 
   // called automatically in constructor
-  public StatusCode configAll() {
+  public StatusCode configureAll() {
     StatusCode status = StatusCode.GeneralError;
     for (int tries = 0; tries < Constants.MAX_CONFIG_RETRIES; tries++) {
       status = pigeon.getConfigurator().apply(Configs.Drive.PIGEON_CONFIG);
@@ -81,7 +81,6 @@ public class Pigeon extends SubsystemBase {
       }
       DriverStation.reportWarning("Warning: Failure configuring Pigeon: " + status, false);
     }
-    System.out.println("Error configuring Pigeon: " + status);
     DriverStation.reportError("Error configuring Pigeon: " + status, false);
     return status;
   }
