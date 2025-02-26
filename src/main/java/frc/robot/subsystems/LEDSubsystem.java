@@ -45,6 +45,10 @@ public class LEDSubsystem extends SubsystemBase {
       LEDPattern.gradient(GradientType.kContinuous, Color.kRed, Color.kOrange, Color.kYellow)
           .scrollAtRelativeSpeed(LEDConstants.SCROLL_SPEED)
           .breathe(LEDConstants.SELF_DESTRUCT_BREATHE_TIME);
+  private final LEDPattern disabledPattern =
+      LEDPattern.gradient(GradientType.kContinuous, Color.kRed, Color.kOrange)
+          .scrollAtRelativeSpeed(LEDConstants.SCROLL_SPEED)
+          .blink(LEDConstants.SELF_DESTRUCT_BREATHE_TIME);
 
   public LEDSubsystem() {
     m_led.setLength(m_ledBuffer.getLength());
@@ -138,6 +142,14 @@ public class LEDSubsystem extends SubsystemBase {
               selfDestructPattern.applyTo(m_ledBuffer);
             })
         .withName("Self Destruct");
+  }
+
+  public Command setDisabled() {
+    return this.run(
+            () -> {
+              disabledPattern.applyTo(m_ledBuffer);
+            })
+        .withName("Disabled");
   }
 
   public Runnable enableUnderglow() {
