@@ -722,7 +722,8 @@ public class Telemetry {
     if (!table.entries.containsKey(name)) {
       DriverStation.reportWarning(
           "Telemetry: entry " + name + " does not exist, creating with type boolean", false);
-      System.out.println("Telemetry: entry " + name + " does not exist, creating with type boolean");
+      System.out.println(
+          "Telemetry: entry " + name + " does not exist, creating with type boolean");
       addReadableValue(name, NetworkTableType.kBoolean);
     }
 
