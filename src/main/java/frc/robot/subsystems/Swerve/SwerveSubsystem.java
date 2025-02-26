@@ -40,7 +40,7 @@ public class SwerveSubsystem extends SubsystemBase {
           },
           new Pose2d());
 
-    private SendableChooser<Command> m_autoChooser;
+  private SendableChooser<Command> m_autoChooser;
 
   public final DoubleSupplier totalCurrentDraw =
       () -> {
@@ -50,6 +50,12 @@ public class SwerveSubsystem extends SubsystemBase {
         }
         return draw;
       };
+
+  public final Supplier<Pose2d> poseSupplier = this::getPose;
+  public final Supplier<ChassisSpeeds> robotRelativeSpeedsSupplier = this::getRobotRelativeSpeeds;
+  public final Supplier<ChassisSpeeds> fieldRelativeSpeedsSupplier = this::getFieldRelativeSpeeds;
+  public final Supplier<Rotation2d> yawSupplier =
+      () -> Rotation2d.fromDegrees(Pigeon.getYawSupplier().get().in(Degrees));
 
   public SwerveSubsystem() {
     // Initialize all of your necessary components here
@@ -100,7 +106,6 @@ public class SwerveSubsystem extends SubsystemBase {
         DriverStation.reportWarning(
             "Warning: Failure configuring " + module.getName() + ": " + status, false);
       }
-      System.out.println("Error configuring " + module.getName() + ": " + status);
       DriverStation.reportError("Error configuring " + module.getName() + ": " + status, false);
     }
     return status;
@@ -230,7 +235,7 @@ public class SwerveSubsystem extends SubsystemBase {
     return new InstantCommand(() -> resetOdometry(pose));
   }
 
-  public SendableChooser<Command> getAutoChooser () {
+  public SendableChooser<Command> getAutoChooser() {
     return m_autoChooser;
   }
 

@@ -81,7 +81,6 @@ public class Pigeon extends SubsystemBase {
       }
       DriverStation.reportWarning("Warning: Failure configuring Pigeon: " + status, false);
     }
-    System.out.println("Error configuring Pigeon: " + status);
     DriverStation.reportError("Error configuring Pigeon: " + status, false);
     return status;
   }

@@ -49,15 +49,18 @@ public class SwerveModuleConfig {
     return steerEncoderOffset;
   }
 
-  public TalonFX getDriveMotor() {
+  // only call once
+  public TalonFX createDriveMotor() {
     return new TalonFX(driveMotorID, canbus);
   }
 
-  public TalonFX getSteerMotor() {
+  // only call once
+  public TalonFX createSteerMotor() {
     return new TalonFX(steerMotorID, canbus);
   }
 
-  public CANcoder getSteerEncoder() {
+  // only call once
+  public CANcoder createSteerEncoder() {
     return new CANcoder(steerEncoderID, canbus);
   }
 
@@ -70,6 +73,7 @@ public class SwerveModuleConfig {
   public TalonFXConfiguration getSteerMotorConfig() {
     TalonFXConfiguration config = new TalonFXConfiguration();
     // Configure the steer motor here
+    config.Feedback.withFeedbackRemoteSensorID(steerEncoderID);
     return config;
   }
 

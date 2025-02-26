@@ -24,6 +24,20 @@ import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import static edu.wpi.first.units.Units.Amps;
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.DegreesPerSecond;
+import static edu.wpi.first.units.Units.FeetPerSecond;
+import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.KilogramSquareMeters;
+import static edu.wpi.first.units.Units.Pounds;
+import static edu.wpi.first.units.Units.RPM;
+
+import com.ctre.phoenix6.CANBus;
+import com.pathplanner.lib.config.ModuleConfig;
+import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -37,6 +51,15 @@ import edu.wpi.first.units.measure.Mass;
 import edu.wpi.first.units.measure.MomentOfInertia;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Current;
+import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.LinearVelocity;
+import edu.wpi.first.units.measure.Mass;
+import edu.wpi.first.units.measure.MomentOfInertia;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.util.Color8Bit;
@@ -61,6 +84,8 @@ public final class Constants {
     public static final String DEPLOY_SERVER_PATH = "";
     public static final int DEPLOY_SERVER_PORT = 5801;
   }
+
+  public static int MAX_CONFIG_RETRIES = 5;
 
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
@@ -155,6 +180,25 @@ public final class Constants {
     public static class CAN {
       public static final CANBus DRIVETRAIN_CANBUS = new CANBus("drivetrain");
       public static final int PIGEON = 0;
+      public static final int FrontLeftDrive = 0;
+      public static final int FrontLeftSteer = 0;
+      public static final int FrontLeftSteerEncoder = 0;
+      public static final int FrontRightDrive = 0;
+      public static final int FrontRightSteer = 0;
+      public static final int FrontRightSteerEncoder = 0;
+      public static final int BackLeftDrive = 0;
+      public static final int BackLeftSteer = 0;
+      public static final int BackLeftSteerEncoder = 0;
+      public static final int BackRightDrive = 0;
+      public static final int BackRightSteer = 0;
+      public static final int BackRightSteerEncoder = 0;
+    }
+
+    public static class SteerOffsets {
+      public static final double FRONT_LEFT = 0;
+      public static final double FRONT_RIGHT = 0;
+      public static final double BACK_LEFT = 0;
+      public static final double BACK_RIGHT = 0;
     }
 
     public static class GyroConstants {
@@ -162,10 +206,38 @@ public final class Constants {
       public static final AngularVelocity GYRO_VELOCITY_TOLERANCE = DegreesPerSecond.of(0);
     }
 
-    public static final SwerveModuleConfig FRONT_LEFT_CONFIG = new SwerveModuleConfig();
-    public static final SwerveModuleConfig FRONT_RIGHT_CONFIG = new SwerveModuleConfig();
-    public static final SwerveModuleConfig BACK_LEFT_CONFIG = new SwerveModuleConfig();
-    public static final SwerveModuleConfig BACK_RIGHT_CONFIG = new SwerveModuleConfig();
+    public static final SwerveModuleConfig FRONT_LEFT_CONFIG =
+        new SwerveModuleConfig(
+            "FrontLeft",
+            CAN.DRIVETRAIN_CANBUS,
+            CAN.FrontLeftDrive,
+            CAN.FrontLeftSteer,
+            CAN.FrontLeftSteerEncoder,
+            SteerOffsets.FRONT_LEFT);
+    public static final SwerveModuleConfig FRONT_RIGHT_CONFIG =
+        new SwerveModuleConfig(
+            "FrontRight",
+            CAN.DRIVETRAIN_CANBUS,
+            CAN.FrontRightDrive,
+            CAN.FrontRightSteer,
+            CAN.FrontRightSteerEncoder,
+            SteerOffsets.FRONT_RIGHT);
+    public static final SwerveModuleConfig BACK_LEFT_CONFIG =
+        new SwerveModuleConfig(
+            "BackLeft",
+            CAN.DRIVETRAIN_CANBUS,
+            CAN.BackLeftDrive,
+            CAN.BackLeftSteer,
+            CAN.BackLeftSteerEncoder,
+            SteerOffsets.BACK_LEFT);
+    public static final SwerveModuleConfig BACK_RIGHT_CONFIG =
+        new SwerveModuleConfig(
+            "BackRight",
+            CAN.DRIVETRAIN_CANBUS,
+            CAN.BackRightDrive,
+            CAN.BackRightSteer,
+            CAN.BackRightSteerEncoder,
+            SteerOffsets.BACK_RIGHT);
 
     public static final Distance WIDTH = Inches.of(0);
     public static final Distance LENGTH = Inches.of(0);
@@ -185,7 +257,9 @@ public final class Constants {
       try {
         robotConfig = RobotConfig.fromGUISettings();
       } catch (Exception e) {
-        DriverStation.reportError("[Swerve] Failed to load GUI robot config, loading default. Error: " + e.getMessage(), false);
+        DriverStation.reportError(
+            "[Swerve] Failed to load GUI robot config, loading default. Error: " + e.getMessage(),
+            false);
         robotConfig =
             new RobotConfig(
                 PhysicsConstants.ROBOT_MASS,
@@ -203,6 +277,17 @@ public final class Constants {
                   new Translation2d(WIDTH.div(2).unaryMinus(), LENGTH.div(2)),
                   new Translation2d(WIDTH.div(2).unaryMinus(), LENGTH.div(2).unaryMinus())
                 });
+      }
+    }
+
+    public static class PIDs {
+      public static class DriveMotor {
+        public static final double kP = 0;
+        public static final double kI = 0;
+        public static final double kD = 0;
+        public static final double kS = 0;
+        public static final double kV = 0;
+        public static final double kA = 0;
       }
     }
 
