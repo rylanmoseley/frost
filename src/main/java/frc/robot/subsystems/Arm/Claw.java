@@ -15,6 +15,7 @@ import edu.wpi.first.networktables.NetworkTableType;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PneumaticHub;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
@@ -30,6 +31,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants;
 import frc.robot.Constants.ArmConstants.ClawConstants;
 import frc.robot.Constants.ArmConstants.ClawConstants.RollerSpeeds;
 import frc.robot.Robot;
@@ -174,13 +176,26 @@ public class Claw extends SubsystemBase {
 
   public REVLibError configureAll(
       SparkMaxConfig rollerLeftConfig, SparkMaxConfig rollerRightConfig) {
+    REVLibError leftErr = REVLibError.kError;
+    REVLibError rightErr = REVLibError.kError;
 
-    REVLibError leftErr =
-        m_rollerLeft.configure(
-            rollerLeftConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-    REVLibError rightErr =
-        m_rollerRight.configure(
-            rollerRightConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    for (int i = 0; i < Constants.MAX_CONFIG_RETRIES; i++) {
+      leftErr =
+          m_rollerLeft.configure(
+              rollerLeftConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+      rightErr =
+          m_rollerRight.configure(
+              rollerRightConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
+      if (leftErr == REVLibError.kOk && rightErr == REVLibError.kOk) {
+        return rightErr;
+      }
+      DriverStation.reportWarning(
+          "Warning: Failure configuring Claw: " + leftErr + ", " + rightErr, false);
+    }
+
+    System.out.println("Error configuring Claw: " + leftErr + ", " + rightErr);
+    DriverStation.reportError("Error configuring Claw: " + leftErr + ", " + rightErr, false);
 
     // return error, if present
     if (leftErr == REVLibError.kOk) {
@@ -310,10 +325,10 @@ public class Claw extends SubsystemBase {
         .withInterruptBehavior(InterruptionBehavior.kCancelSelf);
   }
 
-  // on idle, stop rollers and close claw
+  // on idle, stop rollers and open claw
   public Command idleCommand() {
     return stopRollersCommand()
-        .andThen(closeClawCommand())
+        .andThen(openClawCommand())
         .andThen(
             this.run(
                     () -> {
@@ -355,7 +370,9 @@ public class Claw extends SubsystemBase {
     Telemetry.setValue("Arm/Claw/Roller/LeftVoltageIn", m_rollerLeft.getBusVoltage());
     Telemetry.setValue("Arm/Claw/Roller/RightVoltageIn", m_rollerRight.getBusVoltage());
     Telemetry.setValue("Arm/Claw/Roller/LeftHasFault", m_rollerLeft.hasActiveFault());
+    Telemetry.setValue("Arm/Claw/Roller/LeftHasStickyFault", m_rollerLeft.hasStickyFault());
     Telemetry.setValue("Arm/Claw/Roller/RightHasFault", m_rollerRight.hasActiveFault());
+    Telemetry.setValue("Arm/Claw/Roller/RightHasStickyFault", m_rollerRight.hasStickyFault());
     Telemetry.setValue("Arm/Claw/Roller/LeftVelocityRPM", m_rollerLeftEncoder.getVelocity());
     Telemetry.setValue("Arm/Claw/Roller/RightVelocityRPM", m_rollerRightEncoder.getVelocity());
 
