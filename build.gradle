@@ -1,3 +1,5 @@
+import org.apache.tools.ant.taskdefs.condition.Os
+
 plugins {
     id "java"
     id "edu.wpi.first.GradleRIO" version "2025.1.1"
@@ -80,6 +82,13 @@ test {
     systemProperty 'junit.jupiter.extensions.autodetection.enabled', 'true'
 }
 
+test.finalizedBy {
+    if (!Os.isFamily(Os.FAMILY_WINDOWS)) {
+        return;
+    }
+    java.awt.Desktop.desktop.browse "file:///${project.buildDir.getPath().replace("\\", "/")}/reports/tests/test/index.html".toURI()
+}
+
 // Simulation configuration (e.g. environment variables).
 wpi.sim.addGui().defaultEnabled = true
 wpi.sim.addDriverstation()
@@ -148,5 +157,12 @@ spotless {
         trimTrailingWhitespace()
         indentWithSpaces(2)
         endWithNewline()
+    }
+}
+
+task openDashboards {
+    doLast {
+        java.awt.Desktop.desktop.browse "http://127.0.0.1:5800".toURI()
+        java.awt.Desktop.desktop.browse "http://127.0.0.1:5801".toURI()
     }
 }

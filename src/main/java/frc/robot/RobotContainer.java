@@ -58,6 +58,10 @@ public class RobotContainer {
         WebServer.start(
             DashboardConstants.DASHBOARD_PORT,
             Filesystem.getDeployDirectory() + "/" + DashboardConstants.DASHBOARD_PATH);
+        if (Robot.isSimulation()) {
+          java.awt.Desktop.getDesktop()
+              .browse(java.net.URI.create("http://127.0.0.1:" + DashboardConstants.DASHBOARD_PORT));
+        }
       } catch (Exception e) {
         System.out.println("Dashboard Webserver failed to start: " + e.getMessage());
       }
@@ -74,6 +78,11 @@ public class RobotContainer {
         WebServer.start(
             DashboardConstants.DEPLOY_SERVER_PORT,
             Filesystem.getDeployDirectory() + "/" + DashboardConstants.DEPLOY_SERVER_PATH);
+        if (Robot.isSimulation()) {
+          java.awt.Desktop.getDesktop()
+              .browse(
+                  java.net.URI.create("http://127.0.0.1:" + DashboardConstants.DEPLOY_SERVER_PORT));
+        }
       } catch (Exception e) {
         System.out.println("Deploy Webserver failed to start: " + e.getMessage());
       }
