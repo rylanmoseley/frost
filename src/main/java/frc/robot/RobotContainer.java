@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.DashboardConstants;
@@ -19,6 +20,7 @@ import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.Swerve.SwerveSubsystem;
 import frc.robot.utilities.CommandDriverController;
 import frc.robot.utilities.CommandOperatorController;
+import frc.robot.utilities.RobotEvents;
 import java.util.function.DoubleSupplier;
 
 /**
@@ -72,6 +74,44 @@ public class RobotContainer {
     // Configure the trigger bindings
     configureBindings();
 
+    // LED triggers
+    m_operatorController
+        .coneMode()
+        .and(RobotEvents.endgame.negate())
+        .onTrue(m_LEDSubsystem.setCone());
+    m_operatorController
+        .coneMode()
+        .and(RobotEvents.endgame)
+        .onTrue(m_LEDSubsystem.setEndgameCone());
+    m_operatorController
+        .cubeMode()
+        .and(RobotEvents.endgame.negate())
+        .onTrue(m_LEDSubsystem.setCube());
+    m_operatorController
+        .cubeMode()
+        .and(RobotEvents.endgame)
+        .onTrue(m_LEDSubsystem.setEndgameCube());
+    RobotEvents.robotInitialized.onTrue(m_LEDSubsystem.setInitialize());
+    RobotEvents.teleopEnabled.and(m_armSubsystem.isConeMode).onTrue(m_LEDSubsystem.setCone());
+    RobotEvents.teleopEnabled.and(m_armSubsystem.isCubeMode).onTrue(m_LEDSubsystem.setCube());
+    RobotEvents.robotDisabled.onTrue(m_LEDSubsystem.setDisabled());
+    m_operatorController.selfDestruct().onTrue(m_LEDSubsystem.setSelfDestruct());
+    m_operatorController.shwerve().onTrue(m_LEDSubsystem.setShwerve());
+    RobotEvents.endgame
+        .and(m_armSubsystem.isConeMode)
+        .onTrue(
+            m_LEDSubsystem
+                .setEndgameStart()
+                .withDeadline(new WaitCommand(2))
+                .andThen(m_LEDSubsystem.setEndgameCone()));
+    RobotEvents.endgame
+        .and(m_armSubsystem.isCubeMode)
+        .onTrue(
+            m_LEDSubsystem
+                .setEndgameStart()
+                .withDeadline(new WaitCommand(2))
+                .andThen(m_LEDSubsystem.setEndgameCube()));
+
     SmartDashboard.putData("CommandScheduler", CommandScheduler.getInstance());
   }
 
@@ -91,7 +131,14 @@ public class RobotContainer {
    * PS4} controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
    * joysticks}.
    */
-  private void configureBindings() {}
+  private void configureBindings() {
+    m_swerveSubsystem.setDefaultCommand(
+        m_swerveSubsystem.driveFromJoystickCommand(
+            m_driverController.getChassisForward(),
+            m_driverController.getChassisStrafe(),
+            m_driverController.getChassisRotate(),
+            m_driverController.getChassisFieldOrient()));
+  }
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.

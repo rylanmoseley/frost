@@ -45,6 +45,10 @@ public class LEDSubsystem extends SubsystemBase {
       LEDPattern.gradient(GradientType.kContinuous, Color.kRed, Color.kOrange, Color.kYellow)
           .scrollAtRelativeSpeed(LEDConstants.SCROLL_SPEED)
           .breathe(LEDConstants.SELF_DESTRUCT_BREATHE_TIME);
+  private final LEDPattern disabledPattern =
+      LEDPattern.gradient(GradientType.kContinuous, Color.kRed, Color.kOrange)
+          .scrollAtRelativeSpeed(LEDConstants.SCROLL_SPEED)
+          .blink(LEDConstants.SELF_DESTRUCT_BREATHE_TIME);
 
   public LEDSubsystem() {
     m_led.setLength(m_ledBuffer.getLength());
@@ -140,6 +144,14 @@ public class LEDSubsystem extends SubsystemBase {
         .withName("Self Destruct");
   }
 
+  public Command setDisabled() {
+    return this.run(
+            () -> {
+              disabledPattern.applyTo(m_ledBuffer);
+            })
+        .withName("Disabled");
+  }
+
   public Runnable enableUnderglow() {
     return () -> {
       Power.enableUnderglow();
@@ -157,7 +169,9 @@ public class LEDSubsystem extends SubsystemBase {
     // This method will be called once per scheduler run
     m_led.setData(m_ledBuffer);
 
-    Telemetry.setValue("LEDs/Pattern", this.getCurrentCommand().getName());
+    Telemetry.setValue(
+        "LEDs/Pattern",
+        this.getCurrentCommand() == null ? "null" : this.getCurrentCommand().getName());
     Telemetry.setValue("LEDs/IsUnderglowEnabled", Power.getSwitchableChannel());
   }
 

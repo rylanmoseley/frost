@@ -38,24 +38,13 @@ public class ArmStage extends SubsystemBase {
   private DCMotor m_simMotorModel = DCMotor.getNEO(1);
   private SparkMaxSim m_simMotor;
   private SparkAbsoluteEncoderSim m_simAbsoluteEncoder;
-  private SingleJointedArmSim m_simArm =
-      new SingleJointedArmSim(
-          m_simMotorModel,
-          m_config.getGearRatio(),
-          SingleJointedArmSim.estimateMOI(m_config.getArmLengthMeters(), m_config.getArmMass()),
-          m_config.getArmLengthMeters(),
-          m_config.getMinAngleRads(),
-          m_config.getMaxAngleRads(),
-          true,
-          m_config.getMinAngleRads(),
-          0.0,
-          0.0);
+  private SingleJointedArmSim m_simArm;
 
   private double m_targetPosition;
 
   public DoubleSupplier relativePosition = () -> m_relativeEncoder.getPosition();
   public DoubleSupplier absolutePosition = () -> m_absoluteEncoder.getPosition();
-  public DoubleSupplier adjustedPosition;
+  public DoubleSupplier adjustedPosition = () -> 0; // TODO
   public Trigger atPosition =
       new Trigger(
           () ->
@@ -93,6 +82,18 @@ public class ArmStage extends SubsystemBase {
     if (Robot.isSimulation()) {
       m_simMotor = new SparkMaxSim(m_motor, m_simMotorModel);
       m_simAbsoluteEncoder = new SparkAbsoluteEncoderSim(m_motor);
+      m_simArm =
+          new SingleJointedArmSim(
+              m_simMotorModel,
+              m_config.getGearRatio(),
+              SingleJointedArmSim.estimateMOI(m_config.getArmLengthMeters(), m_config.getArmMass()),
+              m_config.getArmLengthMeters(),
+              m_config.getMinAngleRads(),
+              m_config.getMaxAngleRads(),
+              true,
+              m_config.getMinAngleRads(),
+              0.0,
+              0.0);
     }
   }
 
@@ -114,7 +115,6 @@ public class ArmStage extends SubsystemBase {
       }
       DriverStation.reportWarning("Warning: Failure configuring " + m_name + " :" + error, false);
     }
-    System.out.println("Error configuring " + m_name + " :" + error);
     DriverStation.reportError("Error configuring " + m_name + " :" + error, false);
     return error;
   }

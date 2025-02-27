@@ -7,6 +7,7 @@ import java.util.function.DoubleSupplier;
 
 public class CommandDriverController {
   private CommandXboxController controller;
+  private boolean fieldOrient = true;
 
   public CommandDriverController(int port) {
     controller = new CommandXboxController(port);
@@ -23,6 +24,10 @@ public class CommandDriverController {
 
   public DoubleSupplier getChassisRotate() {
     return controller::getRightX;
+  }
+
+  public BooleanSupplier getChassisFieldOrient() {
+    return () -> fieldOrient;
   }
 
   public BooleanSupplier isIdle() {

@@ -68,7 +68,7 @@ public final class Constants {
 
   public static class PowerConstants {
     public static class CAN {
-      public static final int PDH = 0;
+      public static final int PDH = 1;
     }
   }
 
@@ -78,11 +78,11 @@ public final class Constants {
 
   public static class LEDConstants {
     public static final int LED_PORT = 0;
-    public static final int LED_LENGTH = 0;
-    public static final Frequency SCROLL_SPEED = Hertz.of(0);
-    public static final Frequency FAST_SCROLL_SPEED = Hertz.of(0);
-    public static final Time SHWERVE_BLINK_TIME = Seconds.of(0);
-    public static final Time SELF_DESTRUCT_BREATHE_TIME = Seconds.of(0);
+    public static final int LED_LENGTH = 100;
+    public static final Frequency SCROLL_SPEED = Hertz.of(1);
+    public static final Frequency FAST_SCROLL_SPEED = Hertz.of(2);
+    public static final Time SHWERVE_BLINK_TIME = Seconds.of(1);
+    public static final Time SELF_DESTRUCT_BREATHE_TIME = Seconds.of(2);
   }
 
   public static class ArmConstants {
@@ -95,27 +95,27 @@ public final class Constants {
 
     public static class SimulationConstants {
       /** Pixels */
-      public static final double MECHANISM2D_WIDTH = 0;
+      public static final double MECHANISM2D_WIDTH = 50;
 
       /** Pixels */
-      public static final double MECHANISM2D_HEIGHT = 0;
+      public static final double MECHANISM2D_HEIGHT = 50;
 
-      public static final double MECHANISM2D_PIXELS_PER_INCH = 0;
+      public static final double MECHANISM2D_PIXELS_PER_INCH = 1;
 
       /** Pixels */
-      public static final Translation2d MECHANISM2D_ROOT = new Translation2d(0, 0);
+      public static final Translation2d MECHANISM2D_ROOT = new Translation2d(25, 5);
     }
 
     public static class ArmStagesConstants {
       public static final ArmStageConfig STAGE_1_CONFIG =
           new ArmStageConfig(
-              0, 0, Configs.Arm.STAGE_1_CONFIG, StagePositions.STAGE_1, 0, 0, 0, 0, 0, 0, 0, 0);
+              11, 1, Configs.Arm.STAGE_1_CONFIG, StagePositions.STAGE_1, 1, 1, 0, 0, 1, 1, 0, 1);
       public static final ArmStageConfig STAGE_2_CONFIG =
           new ArmStageConfig(
-              0, 0, Configs.Arm.STAGE_2_CONFIG, StagePositions.STAGE_2, 0, 0, 0, 0, 0, 0, 0, 0);
+              12, 2, Configs.Arm.STAGE_2_CONFIG, StagePositions.STAGE_2, 1, 1, 0, 0, 1, 1, 0, 1);
       public static final ArmStageConfig STAGE_3_CONFIG =
           new ArmStageConfig(
-              0, 0, Configs.Arm.STAGE_3_CONFIG, StagePositions.STAGE_3, 0, 0, 0, 0, 0, 0, 0, 0);
+              13, 3, Configs.Arm.STAGE_3_CONFIG, StagePositions.STAGE_3, 1, 1, 0, 0, 1, 1, 0, 1);
 
       public enum POSITIONS {
         IDLE {
@@ -191,7 +191,36 @@ public final class Constants {
         public static Map<POSITIONS, Double> STAGE_3 = new HashMap<>();
 
         static {
-          // TODO add positions
+          STAGE_1.put(POSITIONS.IDLE, 0.0);
+          STAGE_2.put(POSITIONS.IDLE, 0.0);
+          STAGE_3.put(POSITIONS.IDLE, 0.0);
+          STAGE_1.put(POSITIONS.HIGH_CUBE, 0.0);
+          STAGE_2.put(POSITIONS.HIGH_CUBE, 0.0);
+          STAGE_3.put(POSITIONS.HIGH_CUBE, 0.0);
+          STAGE_1.put(POSITIONS.HIGH_CONE, 0.0);
+          STAGE_2.put(POSITIONS.HIGH_CONE, 0.0);
+          STAGE_3.put(POSITIONS.HIGH_CONE, 0.0);
+          STAGE_1.put(POSITIONS.MID_CUBE, 0.0);
+          STAGE_2.put(POSITIONS.MID_CUBE, 0.0);
+          STAGE_3.put(POSITIONS.MID_CUBE, 0.0);
+          STAGE_1.put(POSITIONS.MID_CONE, 0.0);
+          STAGE_2.put(POSITIONS.MID_CONE, 0.0);
+          STAGE_3.put(POSITIONS.MID_CONE, 0.0);
+          STAGE_1.put(POSITIONS.LOW_CUBE, 0.0);
+          STAGE_2.put(POSITIONS.LOW_CUBE, 0.0);
+          STAGE_3.put(POSITIONS.LOW_CUBE, 0.0);
+          STAGE_1.put(POSITIONS.LOW_CONE, 0.0);
+          STAGE_2.put(POSITIONS.LOW_CONE, 0.0);
+          STAGE_3.put(POSITIONS.LOW_CONE, 0.0);
+          STAGE_1.put(POSITIONS.SUBSTATION, 0.0);
+          STAGE_2.put(POSITIONS.SUBSTATION, 0.0);
+          STAGE_3.put(POSITIONS.SUBSTATION, 0.0);
+          STAGE_1.put(POSITIONS.GROUND, 0.0);
+          STAGE_2.put(POSITIONS.GROUND, 0.0);
+          STAGE_3.put(POSITIONS.GROUND, 0.0);
+          STAGE_1.put(POSITIONS.GROUND_TILT, 0.0);
+          STAGE_2.put(POSITIONS.GROUND_TILT, 0.0);
+          STAGE_3.put(POSITIONS.GROUND_TILT, 0.0);
         }
       }
     }
@@ -199,16 +228,16 @@ public final class Constants {
     public static class ClawConstants {
 
       public static class CAN {
-        public static final int ROLLER_LEFT = 0;
-        public static final int ROLLER_RIGHT = 0;
-        public static final int PNEUMATIC_HUB = 0;
+        public static final int ROLLER_LEFT = 21;
+        public static final int ROLLER_RIGHT = 22;
+        public static final int PNEUMATIC_HUB = 1;
       }
 
       public static class PNEUMATIC_CHANNEL {
         public static final int CLAMP_FORWARD = 0;
-        public static final int CLAMP_REVERSE = 0;
+        public static final int CLAMP_REVERSE = 1;
 
-        public static final int PRESSURE_SWITCH_PORT = 0; // analog channel
+        public static final int PRESSURE_SWITCH_PORT = 6; // analog channel
       }
 
       public static class DIO {
@@ -222,12 +251,12 @@ public final class Constants {
 
       public static class RollerSpeeds {
         public static final double CONE_IDLE = 0;
-        public static final double CONE_INTAKE = 0;
-        public static final double CONE_EJECT = 0;
+        public static final double CONE_INTAKE = 1;
+        public static final double CONE_EJECT = -1;
 
-        public static final double CUBE_IDLE = 0;
-        public static final double CUBE_INTAKE = 0;
-        public static final double CUBE_EJECT = 0;
+        public static final double CUBE_IDLE = 0.5;
+        public static final double CUBE_INTAKE = 1;
+        public static final double CUBE_EJECT = -1;
       }
 
       public static class SimulationConstants {
@@ -239,30 +268,30 @@ public final class Constants {
         public static final double PRESSURE_PISTON_DROP = 5;
 
         /** Pixels */
-        public static final double MECHANISM2D_WIDTH = 0;
+        public static final double MECHANISM2D_WIDTH = 50;
 
         /** Pixels */
-        public static final double MECHANISM2D_HEIGHT = 0;
+        public static final double MECHANISM2D_HEIGHT = 50;
 
-        public static final double MECHANISM2D_PIXELS_PER_INCH = 0;
+        public static final double MECHANISM2D_PIXELS_PER_INCH = 1;
 
         /** Pixels */
-        public static final Translation2d MECHANISM2D_ROOT = new Translation2d(0, 0);
+        public static final Translation2d MECHANISM2D_ROOT = new Translation2d(25, 25);
 
-        public static final Color8Bit CLAW_EMPTY_COLOR = new Color8Bit(0, 0, 0);
-        public static final Color8Bit CLAW_FULL_COLOR = new Color8Bit(0, 0, 0);
+        public static final Color8Bit CLAW_EMPTY_COLOR = new Color8Bit(255, 0, 0);
+        public static final Color8Bit CLAW_FULL_COLOR = new Color8Bit(0, 255, 0);
 
         /** Inches */
-        public static final double MECHANISM2D_CLAW_LENGTH = 0;
+        public static final double MECHANISM2D_CLAW_LENGTH = 10;
 
         /** Degrees */
-        public static final double MECHANISM2D_CLAW_ANGLE_OPEN = 0;
+        public static final double MECHANISM2D_CLAW_ANGLE_OPEN = 45;
 
         /** Degrees */
         public static final double MECHANISM2D_CLAW_ANGLE_CLOSED = 0;
 
         /** Inches */
-        public static final double MECHANISM2D_ROLLER_RADIUS = 0;
+        public static final double MECHANISM2D_ROLLER_RADIUS = 1;
       }
     }
   }
@@ -271,18 +300,18 @@ public final class Constants {
     public static class CAN {
       public static final CANBus DRIVETRAIN_CANBUS = new CANBus("drivetrain");
       public static final int PIGEON = 0;
-      public static final int FrontLeftDrive = 0;
-      public static final int FrontLeftSteer = 0;
-      public static final int FrontLeftSteerEncoder = 0;
-      public static final int FrontRightDrive = 0;
-      public static final int FrontRightSteer = 0;
-      public static final int FrontRightSteerEncoder = 0;
-      public static final int BackLeftDrive = 0;
-      public static final int BackLeftSteer = 0;
-      public static final int BackLeftSteerEncoder = 0;
-      public static final int BackRightDrive = 0;
-      public static final int BackRightSteer = 0;
-      public static final int BackRightSteerEncoder = 0;
+      public static final int FrontLeftDrive = 11;
+      public static final int FrontLeftSteer = 21;
+      public static final int FrontLeftSteerEncoder = 1;
+      public static final int FrontRightDrive = 12;
+      public static final int FrontRightSteer = 22;
+      public static final int FrontRightSteerEncoder = 2;
+      public static final int BackLeftDrive = 13;
+      public static final int BackLeftSteer = 23;
+      public static final int BackLeftSteerEncoder = 3;
+      public static final int BackRightDrive = 14;
+      public static final int BackRightSteer = 24;
+      public static final int BackRightSteerEncoder = 4;
     }
 
     public static class SteerOffsets {
@@ -330,8 +359,8 @@ public final class Constants {
             CAN.BackRightSteerEncoder,
             SteerOffsets.BACK_RIGHT);
 
-    public static final Distance WIDTH = Inches.of(0);
-    public static final Distance LENGTH = Inches.of(0);
+    public static final Distance WIDTH = Inches.of(10);
+    public static final Distance LENGTH = Inches.of(10);
     public static final SwerveDriveKinematics KINEMATICS =
         new SwerveDriveKinematics(
             new Translation2d(WIDTH.div(2), LENGTH.div(2)),
@@ -383,15 +412,15 @@ public final class Constants {
     }
 
     public static class PhysicsConstants {
-      public static final Mass ROBOT_MASS = Pounds.of(0);
-      public static final MomentOfInertia ROBOT_MOI = KilogramSquareMeters.of(0);
-      public static final double WHEEL_COF = 0;
-      public static final double DRIVE_GEAR_RATIO = 0;
-      public static final Distance WHEEL_DIAMETER = Inches.of(0);
+      public static final Mass ROBOT_MASS = Pounds.of(1);
+      public static final MomentOfInertia ROBOT_MOI = KilogramSquareMeters.of(1);
+      public static final double WHEEL_COF = 1;
+      public static final double DRIVE_GEAR_RATIO = 1;
+      public static final Distance WHEEL_DIAMETER = Inches.of(1);
       public static final Distance WHEEL_CIRCUMFERENCE = WHEEL_DIAMETER.times(Math.PI);
-      public static final AngularVelocity MAX_MOTOR_SPEED = RPM.of(0);
-      public static final LinearVelocity MAX_STRAFE_SPEED = FeetPerSecond.of(0);
-      public static final Current DRIVE_MOTOR_CURRENT_LIMIT = Amps.of(0);
+      public static final AngularVelocity MAX_MOTOR_SPEED = RPM.of(1);
+      public static final LinearVelocity MAX_STRAFE_SPEED = FeetPerSecond.of(1);
+      public static final Current DRIVE_MOTOR_CURRENT_LIMIT = Amps.of(1);
 
       public static class SimulationConstants {
         public static final DCMotor driveMotor =

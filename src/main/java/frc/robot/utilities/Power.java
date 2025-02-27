@@ -67,7 +67,7 @@ public class Power extends SubsystemBase {
 
   public static boolean[] getFaults() {
     PowerDistributionFaults faults = getInstance().m_pdh.getFaults();
-    boolean[] faultArray = new boolean[26];
+    boolean[] faultArray = new boolean[27];
     faultArray[0] = faults.Brownout;
     faultArray[1] = faults.CanWarning;
     faultArray[2] = faults.HardwareFault;
@@ -113,7 +113,7 @@ public class Power extends SubsystemBase {
 
   public static boolean[] getStickyFaults() {
     PowerDistributionStickyFaults faults = getInstance().m_pdh.getStickyFaults();
-    boolean[] faultArray = new boolean[29];
+    boolean[] faultArray = new boolean[30];
     faultArray[0] = faults.Brownout;
     faultArray[1] = faults.CanWarning;
     faultArray[2] = faults.HardwareFault;
