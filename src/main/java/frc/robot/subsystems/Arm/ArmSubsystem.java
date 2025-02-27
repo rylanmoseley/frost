@@ -55,6 +55,8 @@ public class ArmSubsystem extends SubsystemBase {
                   * SimulationConstants.MECHANISM2D_PIXELS_PER_INCH,
               0));
 
+  // TODO pass mech2d to NT
+
   public final DoubleSupplier totalCurrentDraw =
       () ->
           m_claw.totalCurrentDraw.getAsDouble()

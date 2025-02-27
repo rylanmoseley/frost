@@ -2,11 +2,11 @@ package frc.robot.subsystems.Arm;
 
 import com.revrobotics.REVLibError;
 import com.revrobotics.sim.SparkMaxSim;
-import com.revrobotics.spark.SparkAbsoluteEncoder;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkRelativeEncoder;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
@@ -47,10 +47,10 @@ public class Claw extends SubsystemBase {
   private SparkMax m_rollerRight =
       new SparkMax(ClawConstants.CAN.ROLLER_RIGHT, MotorType.kBrushless);
 
-  private SparkAbsoluteEncoder m_rollerLeftEncoder =
-      (SparkAbsoluteEncoder) m_rollerLeft.getEncoder();
-  private SparkAbsoluteEncoder m_rollerRightEncoder =
-      (SparkAbsoluteEncoder) m_rollerRight.getEncoder();
+  private SparkRelativeEncoder m_rollerLeftEncoder =
+      (SparkRelativeEncoder) m_rollerLeft.getEncoder();
+  private SparkRelativeEncoder m_rollerRightEncoder =
+      (SparkRelativeEncoder) m_rollerRight.getEncoder();
 
   private PneumaticHub m_pneumaticHub = new PneumaticHub(ClawConstants.CAN.PNEUMATIC_HUB);
   private DoubleSolenoid m_clamp =
@@ -164,8 +164,8 @@ public class Claw extends SubsystemBase {
     Telemetry.addValue("Arm/Claw/Roller/RightVoltageIn", NetworkTableType.kDouble);
     Telemetry.addValue("Arm/Claw/Roller/LeftHasFault", NetworkTableType.kBoolean);
     Telemetry.addValue("Arm/Claw/Roller/RightHasFault", NetworkTableType.kBoolean);
-    Telemetry.setValue("Arm/Claw/Roller/LeftVelocityRPM", NetworkTableType.kDouble);
-    Telemetry.setValue("Arm/Claw/Roller/RightVelocityRPM", NetworkTableType.kDouble);
+    Telemetry.addValue("Arm/Claw/Roller/LeftVelocityRPM", NetworkTableType.kDouble);
+    Telemetry.addValue("Arm/Claw/Roller/RightVelocityRPM", NetworkTableType.kDouble);
 
     Telemetry.addValue("Arm/Claw/TotalCurrentDraw", NetworkTableType.kDouble);
 

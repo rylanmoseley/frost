@@ -27,7 +27,13 @@ import java.util.function.Supplier;
 
 public class SwerveSubsystem extends SubsystemBase {
 
-  private SwerveModule[] m_swerveModules = new SwerveModule[4];
+  private SwerveModule[] m_swerveModules =
+      new SwerveModule[] {
+        new SwerveModule(SwerveConstants.FRONT_LEFT_CONFIG),
+        new SwerveModule(SwerveConstants.FRONT_RIGHT_CONFIG),
+        new SwerveModule(SwerveConstants.BACK_LEFT_CONFIG),
+        new SwerveModule(SwerveConstants.BACK_RIGHT_CONFIG),
+      };
   private SwerveDrivePoseEstimator m_poseEstimator =
       new SwerveDrivePoseEstimator(
           SwerveConstants.KINEMATICS,
@@ -58,19 +64,9 @@ public class SwerveSubsystem extends SubsystemBase {
       () -> Rotation2d.fromDegrees(Pigeon.getYawSupplier().get().in(Degrees));
 
   public SwerveSubsystem() {
-    // Initialize all of your necessary components here
-    m_swerveModules[0] = new SwerveModule(SwerveConstants.FRONT_LEFT_CONFIG);
-    m_swerveModules[1] = new SwerveModule(SwerveConstants.FRONT_RIGHT_CONFIG);
-    m_swerveModules[2] = new SwerveModule(SwerveConstants.BACK_LEFT_CONFIG);
-    m_swerveModules[3] = new SwerveModule(SwerveConstants.BACK_RIGHT_CONFIG);
-
     configureAll();
 
     System.out.println("Swerve initialized");
-
-    m_autoChooser = AutoBuilder.buildAutoChooser();
-
-    System.out.println("Auto chooser initialized");
 
     // Reset the pose estimator
     resetOdometry(new Pose2d());
@@ -90,6 +86,9 @@ public class SwerveSubsystem extends SubsystemBase {
           return false;
         },
         this);
+
+    m_autoChooser = AutoBuilder.buildAutoChooser();
+    System.out.println("Auto chooser initialized");
   }
 
   private StatusCode configureAll() {

@@ -54,13 +54,24 @@ public class Telemetry {
   }
 
   private static synchronized Telemetry getTelemetry() {
-    if (telemetryInstance == null) telemetryInstance = new Telemetry();
+    if (telemetryInstance == null) {
+      telemetryInstance = new Telemetry();
+
+      // we can't call getTelemetry() in the constructor, so we have to add these values here
+      addReadableValue("diagnostics/telemetry/warningCount", NetworkTableType.kInteger);
+    }
 
     return telemetryInstance;
   }
 
   public static void startSimulationServer() {
     getTelemetry().ntInstance.startServer();
+  }
+
+  private static void incrementWarningCounter() {
+    setValue(
+        "diagnostics/telemetry/warningCount",
+        1 + (int) getValue("diagnostics/telemetry/warningCount", 0));
   }
 
   public static void addValue(String name, NetworkTableType type, PubSubOption... options) {
@@ -127,6 +138,7 @@ public class Telemetry {
       default:
         DriverStation.reportWarning(
             "Telemetry: invalid type " + type.getValueStr() + " for entry " + name, false);
+        incrementWarningCounter();
         return;
     }
     table.entries.put(name, table.new TelemetryItem(pub, null, false, type));
@@ -208,6 +220,7 @@ public class Telemetry {
       default:
         DriverStation.reportWarning(
             "Telemetry: invalid type " + type.getValueStr() + " for entry " + name, false);
+        incrementWarningCounter();
         return;
     }
     table.entries.put(name, table.new TelemetryItem(pub, sub, true, type));
@@ -215,6 +228,12 @@ public class Telemetry {
 
   public static void setValue(String name, boolean value) {
     Telemetry table = getTelemetry();
+    if (!table.entries.containsKey(name)) {
+      DriverStation.reportWarning(
+          "Telemetry: entry " + name + " does not exist, creating with type boolean", false);
+      incrementWarningCounter();
+      addValue(name, NetworkTableType.kBoolean);
+    }
     TelemetryItem item = table.entries.get(name);
     if (item.type == NetworkTableType.kBoolean) {
       ((BooleanPublisher) item.publisher).set(value);
@@ -225,11 +244,18 @@ public class Telemetry {
               + ": expected boolean, got "
               + item.type.getValueStr(),
           false);
+      incrementWarningCounter();
     }
   }
 
   public static void setValue(String name, boolean[] value) {
     Telemetry table = getTelemetry();
+    if (!table.entries.containsKey(name)) {
+      DriverStation.reportWarning(
+          "Telemetry: entry " + name + " does not exist, creating with type boolean[]", false);
+      incrementWarningCounter();
+      addValue(name, NetworkTableType.kBooleanArray);
+    }
     TelemetryItem item = table.entries.get(name);
     if (item.type == NetworkTableType.kBooleanArray) {
       ((BooleanArrayPublisher) item.publisher).set(value);
@@ -240,11 +266,18 @@ public class Telemetry {
               + ": expected boolean[], got "
               + item.type.getValueStr(),
           false);
+      incrementWarningCounter();
     }
   }
 
   public static void setValue(String name, double value) {
     Telemetry table = getTelemetry();
+    if (!table.entries.containsKey(name)) {
+      DriverStation.reportWarning(
+          "Telemetry: entry " + name + " does not exist, creating with type double", false);
+      incrementWarningCounter();
+      addValue(name, NetworkTableType.kDouble);
+    }
     TelemetryItem item = table.entries.get(name);
     if (item.type == NetworkTableType.kDouble) {
       ((DoublePublisher) item.publisher).set(value);
@@ -255,11 +288,22 @@ public class Telemetry {
               + ": expected double, got "
               + item.type.getValueStr(),
           false);
+      incrementWarningCounter();
     }
+  }
+
+  public static void setValue(String name, Double value) {
+    setValue(name, value.doubleValue());
   }
 
   public static void setValue(String name, double[] value) {
     Telemetry table = getTelemetry();
+    if (!table.entries.containsKey(name)) {
+      DriverStation.reportWarning(
+          "Telemetry: entry " + name + " does not exist, creating with type double[]", false);
+      incrementWarningCounter();
+      addValue(name, NetworkTableType.kDoubleArray);
+    }
     TelemetryItem item = table.entries.get(name);
     if (item.type == NetworkTableType.kDoubleArray) {
       ((DoubleArrayPublisher) item.publisher).set(value);
@@ -270,11 +314,26 @@ public class Telemetry {
               + ": expected double[], got "
               + item.type.getValueStr(),
           false);
+      incrementWarningCounter();
     }
+  }
+
+  public static void setValue(String name, Double[] value) {
+    double[] doubleValue = new double[value.length];
+    for (int i = 0; i < value.length; i++) {
+      doubleValue[i] = value[i].doubleValue();
+    }
+    setValue(name, doubleValue);
   }
 
   public static void setValue(String name, float value) {
     Telemetry table = getTelemetry();
+    if (!table.entries.containsKey(name)) {
+      DriverStation.reportWarning(
+          "Telemetry: entry " + name + " does not exist, creating with type float", false);
+      incrementWarningCounter();
+      addValue(name, NetworkTableType.kFloat);
+    }
     TelemetryItem item = table.entries.get(name);
     if (item.type == NetworkTableType.kFloat) {
       ((FloatPublisher) item.publisher).set(value);
@@ -285,11 +344,22 @@ public class Telemetry {
               + ": expected float, got "
               + item.type.getValueStr(),
           false);
+      incrementWarningCounter();
     }
+  }
+
+  public static void setValue(String name, Float value) {
+    setValue(name, value.floatValue());
   }
 
   public static void setValue(String name, float[] value) {
     Telemetry table = getTelemetry();
+    if (!table.entries.containsKey(name)) {
+      DriverStation.reportWarning(
+          "Telemetry: entry " + name + " does not exist, creating with type float[]", false);
+      incrementWarningCounter();
+      addValue(name, NetworkTableType.kFloatArray);
+    }
     TelemetryItem item = table.entries.get(name);
     if (item.type == NetworkTableType.kFloatArray) {
       ((FloatArrayPublisher) item.publisher).set(value);
@@ -300,11 +370,26 @@ public class Telemetry {
               + ": expected float[], got "
               + item.type.getValueStr(),
           false);
+      incrementWarningCounter();
     }
+  }
+
+  public static void setValue(String name, Float[] value) {
+    float[] floatValue = new float[value.length];
+    for (int i = 0; i < value.length; i++) {
+      floatValue[i] = value[i].floatValue();
+    }
+    setValue(name, floatValue);
   }
 
   public static void setValue(String name, int value) {
     Telemetry table = getTelemetry();
+    if (!table.entries.containsKey(name)) {
+      DriverStation.reportWarning(
+          "Telemetry: entry " + name + " does not exist, creating with type int", false);
+      incrementWarningCounter();
+      addValue(name, NetworkTableType.kInteger);
+    }
     TelemetryItem item = table.entries.get(name);
     if (item.type == NetworkTableType.kInteger) {
       ((IntegerPublisher) item.publisher).set(value);
@@ -315,11 +400,22 @@ public class Telemetry {
               + ": expected int, got "
               + item.type.getValueStr(),
           false);
+      incrementWarningCounter();
     }
+  }
+
+  public static void setValue(String name, Integer value) {
+    setValue(name, value.intValue());
   }
 
   public static void setValue(String name, long[] value) {
     Telemetry table = getTelemetry();
+    if (!table.entries.containsKey(name)) {
+      DriverStation.reportWarning(
+          "Telemetry: entry " + name + " does not exist, creating with type int[]", false);
+      incrementWarningCounter();
+      addValue(name, NetworkTableType.kIntegerArray);
+    }
     TelemetryItem item = table.entries.get(name);
     if (item.type == NetworkTableType.kIntegerArray) {
       ((IntegerArrayPublisher) item.publisher).set(value);
@@ -330,11 +426,26 @@ public class Telemetry {
               + ": expected int[], got "
               + item.type.getValueStr(),
           false);
+      incrementWarningCounter();
     }
+  }
+
+  public static void setValue(String name, Long[] value) {
+    long[] longValue = new long[value.length];
+    for (int i = 0; i < value.length; i++) {
+      longValue[i] = value[i].longValue();
+    }
+    setValue(name, longValue);
   }
 
   public static void setValue(String name, String value) {
     Telemetry table = getTelemetry();
+    if (!table.entries.containsKey(name)) {
+      DriverStation.reportWarning(
+          "Telemetry: entry " + name + " does not exist, creating with type String", false);
+      incrementWarningCounter();
+      addValue(name, NetworkTableType.kString);
+    }
     TelemetryItem item = table.entries.get(name);
     if (item.type == NetworkTableType.kString) {
       ((StringPublisher) item.publisher).set(value);
@@ -345,11 +456,18 @@ public class Telemetry {
               + ": expected String, got "
               + item.type.getValueStr(),
           false);
+      incrementWarningCounter();
     }
   }
 
   public static void setValue(String name, String[] value) {
     Telemetry table = getTelemetry();
+    if (!table.entries.containsKey(name)) {
+      DriverStation.reportWarning(
+          "Telemetry: entry " + name + " does not exist, creating with type String[]", false);
+      incrementWarningCounter();
+      addValue(name, NetworkTableType.kStringArray);
+    }
     TelemetryItem item = table.entries.get(name);
     if (item.type == NetworkTableType.kStringArray) {
       ((StringArrayPublisher) item.publisher).set(value);
@@ -360,11 +478,18 @@ public class Telemetry {
               + ": expected String[], got "
               + item.type.getValueStr(),
           false);
+      incrementWarningCounter();
     }
   }
 
   public static void setValue(String name, byte[] value) {
     Telemetry table = getTelemetry();
+    if (!table.entries.containsKey(name)) {
+      DriverStation.reportWarning(
+          "Telemetry: entry " + name + " does not exist, creating with type byte[]", false);
+      incrementWarningCounter();
+      addValue(name, NetworkTableType.kRaw);
+    }
     TelemetryItem item = table.entries.get(name);
     if (item.type == NetworkTableType.kRaw) {
       ((RawPublisher) item.publisher).set(value);
@@ -375,6 +500,7 @@ public class Telemetry {
               + ": expected byte[], got "
               + item.type.getValueStr(),
           false);
+      incrementWarningCounter();
     }
   }
 
@@ -386,6 +512,7 @@ public class Telemetry {
             + value.getClass().getName()
             + ", expected primitive",
         false);
+    incrementWarningCounter();
   }
 
   public static void setValue(String name, Object[] value) {
@@ -396,6 +523,7 @@ public class Telemetry {
             + value.getClass().getName()
             + "[], expected primitive[]",
         false);
+    incrementWarningCounter();
   }
 
   public static DoubleSupplier subscribe(String name, double defaultValue) {
@@ -404,7 +532,7 @@ public class Telemetry {
     if (!table.entries.containsKey(name)) {
       DriverStation.reportWarning(
           "Telemetry: entry " + name + " does not exist, creating with type double", false);
-      System.out.println("Telemetry: entry " + name + " does not exist, creating with type double");
+      incrementWarningCounter();
       addReadableValue(name, NetworkTableType.kDouble);
     }
 
@@ -420,6 +548,7 @@ public class Telemetry {
               + item.type.getValueStr()
               + ", returning default value",
           false);
+      incrementWarningCounter();
       return () -> defaultValue;
     }
 
@@ -439,8 +568,7 @@ public class Telemetry {
     if (!table.entries.containsKey(name)) {
       DriverStation.reportWarning(
           "Telemetry: entry " + name + " does not exist, creating with type double[]", false);
-      System.out.println(
-          "Telemetry: entry " + name + " does not exist, creating with type double[]");
+      incrementWarningCounter();
       addReadableValue(name, NetworkTableType.kDoubleArray);
     }
 
@@ -456,6 +584,7 @@ public class Telemetry {
               + item.type.getValueStr()
               + ", returning default value",
           false);
+      incrementWarningCounter();
       return () -> defaultValue;
     }
 
@@ -475,7 +604,7 @@ public class Telemetry {
     if (!table.entries.containsKey(name)) {
       DriverStation.reportWarning(
           "Telemetry: entry " + name + " does not exist, creating with type float", false);
-      System.out.println("Telemetry: entry " + name + " does not exist, creating with type float");
+      incrementWarningCounter();
       addReadableValue(name, NetworkTableType.kFloat);
     }
 
@@ -491,6 +620,7 @@ public class Telemetry {
               + item.type.getValueStr()
               + ", returning default value",
           false);
+      incrementWarningCounter();
       return () -> defaultValue;
     }
 
@@ -510,8 +640,7 @@ public class Telemetry {
     if (!table.entries.containsKey(name)) {
       DriverStation.reportWarning(
           "Telemetry: entry " + name + " does not exist, creating with type float[]", false);
-      System.out.println(
-          "Telemetry: entry " + name + " does not exist, creating with type float[]");
+      incrementWarningCounter();
       addReadableValue(name, NetworkTableType.kFloatArray);
     }
 
@@ -527,6 +656,7 @@ public class Telemetry {
               + item.type.getValueStr()
               + ", returning default value",
           false);
+      incrementWarningCounter();
       return () -> defaultValue;
     }
 
@@ -546,7 +676,7 @@ public class Telemetry {
     if (!table.entries.containsKey(name)) {
       DriverStation.reportWarning(
           "Telemetry: entry " + name + " does not exist, creating with type int", false);
-      System.out.println("Telemetry: entry " + name + " does not exist, creating with type int");
+      incrementWarningCounter();
       addReadableValue(name, NetworkTableType.kInteger);
     }
 
@@ -562,6 +692,7 @@ public class Telemetry {
               + item.type.getValueStr()
               + ", returning default value",
           false);
+      incrementWarningCounter();
       return () -> defaultValue;
     }
 
@@ -581,7 +712,7 @@ public class Telemetry {
     if (!table.entries.containsKey(name)) {
       DriverStation.reportWarning(
           "Telemetry: entry " + name + " does not exist, creating with type int[]", false);
-      System.out.println("Telemetry: entry " + name + " does not exist, creating with type int[]");
+      incrementWarningCounter();
       addReadableValue(name, NetworkTableType.kIntegerArray);
     }
 
@@ -597,6 +728,7 @@ public class Telemetry {
               + item.type.getValueStr()
               + ", returning default value",
           false);
+      incrementWarningCounter();
       return () -> defaultValue;
     }
 
@@ -616,7 +748,7 @@ public class Telemetry {
     if (!table.entries.containsKey(name)) {
       DriverStation.reportWarning(
           "Telemetry: entry " + name + " does not exist, creating with type String", false);
-      System.out.println("Telemetry: entry " + name + " does not exist, creating with type String");
+      incrementWarningCounter();
       addReadableValue(name, NetworkTableType.kString);
     }
 
@@ -632,6 +764,7 @@ public class Telemetry {
               + item.type.getValueStr()
               + ", returning default value",
           false);
+      incrementWarningCounter();
       return () -> defaultValue;
     }
 
@@ -651,8 +784,7 @@ public class Telemetry {
     if (!table.entries.containsKey(name)) {
       DriverStation.reportWarning(
           "Telemetry: entry " + name + " does not exist, creating with type String[]", false);
-      System.out.println(
-          "Telemetry: entry " + name + " does not exist, creating with type String[]");
+      incrementWarningCounter();
       addReadableValue(name, NetworkTableType.kStringArray);
     }
 
@@ -668,6 +800,7 @@ public class Telemetry {
               + item.type.getValueStr()
               + ", returning default value",
           false);
+      incrementWarningCounter();
       return () -> defaultValue;
     }
 
@@ -687,7 +820,7 @@ public class Telemetry {
     if (!table.entries.containsKey(name)) {
       DriverStation.reportWarning(
           "Telemetry: entry " + name + " does not exist, creating with type byte[]", false);
-      System.out.println("Telemetry: entry " + name + " does not exist, creating with type byte[]");
+      incrementWarningCounter();
       addReadableValue(name, NetworkTableType.kRaw);
     }
 
@@ -703,6 +836,7 @@ public class Telemetry {
               + item.type.getValueStr()
               + ", returning default value",
           false);
+      incrementWarningCounter();
       return () -> defaultValue;
     }
 
@@ -722,8 +856,7 @@ public class Telemetry {
     if (!table.entries.containsKey(name)) {
       DriverStation.reportWarning(
           "Telemetry: entry " + name + " does not exist, creating with type boolean", false);
-      System.out.println(
-          "Telemetry: entry " + name + " does not exist, creating with type boolean");
+      incrementWarningCounter();
       addReadableValue(name, NetworkTableType.kBoolean);
     }
 
@@ -739,6 +872,7 @@ public class Telemetry {
               + item.type.getValueStr()
               + ", returning default value",
           false);
+      incrementWarningCounter();
       return () -> defaultValue;
     }
 
@@ -758,8 +892,7 @@ public class Telemetry {
     if (!table.entries.containsKey(name)) {
       DriverStation.reportWarning(
           "Telemetry: entry " + name + " does not exist, creating with type boolean[]", false);
-      System.out.println(
-          "Telemetry: entry " + name + " does not exist, creating with type boolean[]");
+      incrementWarningCounter();
       addReadableValue(name, NetworkTableType.kBooleanArray);
     }
 
@@ -775,6 +908,7 @@ public class Telemetry {
               + item.type.getValueStr()
               + ", returning default value",
           false);
+      incrementWarningCounter();
       return () -> defaultValue;
     }
 
@@ -796,6 +930,7 @@ public class Telemetry {
             + defaultValue.getClass().getName()
             + ", expected primitive",
         false);
+    incrementWarningCounter();
   }
 
   public static void subscribe(String name, Object[] defaultValue) {
@@ -806,6 +941,7 @@ public class Telemetry {
             + defaultValue.getClass().getName()
             + "[], expected primitive[]",
         false);
+    incrementWarningCounter();
   }
 
   public static double getValue(String name, double defaultValue) {
@@ -814,7 +950,7 @@ public class Telemetry {
     if (!table.entries.containsKey(name)) {
       DriverStation.reportWarning(
           "Telemetry: entry " + name + " does not exist, creating with type double", false);
-      System.out.println("Telemetry: entry " + name + " does not exist, creating with type double");
+      incrementWarningCounter();
       addReadableValue(name, NetworkTableType.kDouble);
     }
 
@@ -825,6 +961,7 @@ public class Telemetry {
               + name
               + " [double] is not readable. Create with addReadableValue or subscribe before reading.",
           false);
+      incrementWarningCounter();
       return defaultValue;
     }
 
@@ -837,6 +974,7 @@ public class Telemetry {
               + ": expected double, got "
               + item.type.getValueStr(),
           false);
+      incrementWarningCounter();
       return defaultValue;
     }
   }
@@ -847,8 +985,7 @@ public class Telemetry {
     if (!table.entries.containsKey(name)) {
       DriverStation.reportWarning(
           "Telemetry: entry " + name + " does not exist, creating with type boolean", false);
-      System.out.println(
-          "Telemetry: entry " + name + " does not exist, creating with type boolean");
+      incrementWarningCounter();
       addReadableValue(name, NetworkTableType.kBoolean);
     }
 
@@ -860,6 +997,7 @@ public class Telemetry {
               + name
               + " [boolean] is not readable. Create with addReadableValue or subscribe before reading.",
           false);
+      incrementWarningCounter();
       return defaultValue;
     }
 
@@ -872,6 +1010,7 @@ public class Telemetry {
               + ": expected boolean, got "
               + item.type.getValueStr(),
           false);
+      incrementWarningCounter();
       return defaultValue;
     }
   }
@@ -882,8 +1021,7 @@ public class Telemetry {
     if (!table.entries.containsKey(name)) {
       DriverStation.reportWarning(
           "Telemetry: entry " + name + " does not exist, creating with type double[]", false);
-      System.out.println(
-          "Telemetry: entry " + name + " does not exist, creating with type double[]");
+      incrementWarningCounter();
       addReadableValue(name, NetworkTableType.kDoubleArray);
     }
 
@@ -895,6 +1033,7 @@ public class Telemetry {
               + name
               + " [double[]] is not readable. Create with addReadableValue or subscribe before reading.",
           false);
+      incrementWarningCounter();
       return defaultValue;
     }
 
@@ -907,6 +1046,7 @@ public class Telemetry {
               + ": expected double[], got "
               + item.type.getValueStr(),
           false);
+      incrementWarningCounter();
       return defaultValue;
     }
   }
@@ -917,8 +1057,7 @@ public class Telemetry {
     if (!table.entries.containsKey(name)) {
       DriverStation.reportWarning(
           "Telemetry: entry " + name + " does not exist, creating with type boolean[]", false);
-      System.out.println(
-          "Telemetry: entry " + name + " does not exist, creating with type boolean[]");
+      incrementWarningCounter();
       addReadableValue(name, NetworkTableType.kBooleanArray);
     }
 
@@ -930,6 +1069,7 @@ public class Telemetry {
               + name
               + " [boolean[]] is not readable. Create with addReadableValue or subscribe before reading.",
           false);
+      incrementWarningCounter();
       return defaultValue;
     }
 
@@ -942,6 +1082,7 @@ public class Telemetry {
               + ": expected boolean[], got "
               + item.type.getValueStr(),
           false);
+      incrementWarningCounter();
       return defaultValue;
     }
   }
@@ -952,7 +1093,7 @@ public class Telemetry {
     if (!table.entries.containsKey(name)) {
       DriverStation.reportWarning(
           "Telemetry: entry " + name + " does not exist, creating with type float", false);
-      System.out.println("Telemetry: entry " + name + " does not exist, creating with type float");
+      incrementWarningCounter();
       addReadableValue(name, NetworkTableType.kFloat);
     }
 
@@ -964,6 +1105,7 @@ public class Telemetry {
               + name
               + " [float] is not readable. Create with addReadableValue or subscribe before reading.",
           false);
+      incrementWarningCounter();
       return defaultValue;
     }
 
@@ -976,6 +1118,7 @@ public class Telemetry {
               + ": expected float, got "
               + item.type.getValueStr(),
           false);
+      incrementWarningCounter();
       return defaultValue;
     }
   }
@@ -986,8 +1129,7 @@ public class Telemetry {
     if (!table.entries.containsKey(name)) {
       DriverStation.reportWarning(
           "Telemetry: entry " + name + " does not exist, creating with type float[]", false);
-      System.out.println(
-          "Telemetry: entry " + name + " does not exist, creating with type float[]");
+      incrementWarningCounter();
       addReadableValue(name, NetworkTableType.kFloatArray);
     }
 
@@ -999,6 +1141,7 @@ public class Telemetry {
               + name
               + " [float[]] is not readable. Create with addReadableValue or subscribe before reading.",
           false);
+      incrementWarningCounter();
       return defaultValue;
     }
 
@@ -1011,6 +1154,7 @@ public class Telemetry {
               + ": expected float[], got "
               + item.type.getValueStr(),
           false);
+      incrementWarningCounter();
       return defaultValue;
     }
   }
@@ -1021,7 +1165,7 @@ public class Telemetry {
     if (!table.entries.containsKey(name)) {
       DriverStation.reportWarning(
           "Telemetry: entry " + name + " does not exist, creating with type int", false);
-      System.out.println("Telemetry: entry " + name + " does not exist, creating with type int");
+      incrementWarningCounter();
       addReadableValue(name, NetworkTableType.kInteger);
     }
 
@@ -1033,6 +1177,7 @@ public class Telemetry {
               + name
               + " [int] is not readable. Create with addReadableValue or subscribe before reading.",
           false);
+      incrementWarningCounter();
       return defaultValue;
     }
 
@@ -1045,6 +1190,7 @@ public class Telemetry {
               + ": expected int, got "
               + item.type.getValueStr(),
           false);
+      incrementWarningCounter();
       return defaultValue;
     }
   }
@@ -1055,7 +1201,7 @@ public class Telemetry {
     if (!table.entries.containsKey(name)) {
       DriverStation.reportWarning(
           "Telemetry: entry " + name + " does not exist, creating with type int[]", false);
-      System.out.println("Telemetry: entry " + name + " does not exist, creating with type int[]");
+      incrementWarningCounter();
       addReadableValue(name, NetworkTableType.kIntegerArray);
     }
 
@@ -1067,6 +1213,7 @@ public class Telemetry {
               + name
               + " [int[]] is not readable. Create with addReadableValue or subscribe before reading.",
           false);
+      incrementWarningCounter();
       return defaultValue;
     }
 
@@ -1079,6 +1226,7 @@ public class Telemetry {
               + ": expected int[], got "
               + item.type.getValueStr(),
           false);
+      incrementWarningCounter();
       return defaultValue;
     }
   }
@@ -1089,7 +1237,7 @@ public class Telemetry {
     if (!table.entries.containsKey(name)) {
       DriverStation.reportWarning(
           "Telemetry: entry " + name + " does not exist, creating with type String", false);
-      System.out.println("Telemetry: entry " + name + " does not exist, creating with type String");
+      incrementWarningCounter();
       addReadableValue(name, NetworkTableType.kString);
     }
 
@@ -1101,6 +1249,7 @@ public class Telemetry {
               + name
               + " [String] is not readable. Create with addReadableValue or subscribe before reading.",
           false);
+      incrementWarningCounter();
       return defaultValue;
     }
 
@@ -1113,6 +1262,7 @@ public class Telemetry {
               + ": expected String, got "
               + item.type.getValueStr(),
           false);
+      incrementWarningCounter();
       return defaultValue;
     }
   }
@@ -1123,8 +1273,7 @@ public class Telemetry {
     if (!table.entries.containsKey(name)) {
       DriverStation.reportWarning(
           "Telemetry: entry " + name + " does not exist, creating with type String[]", false);
-      System.out.println(
-          "Telemetry: entry " + name + " does not exist, creating with type String[]");
+      incrementWarningCounter();
       addReadableValue(name, NetworkTableType.kStringArray);
     }
 
@@ -1136,6 +1285,7 @@ public class Telemetry {
               + name
               + " [String[]] is not readable. Create with addReadableValue or subscribe before reading.",
           false);
+      incrementWarningCounter();
       return defaultValue;
     }
 
@@ -1148,6 +1298,7 @@ public class Telemetry {
               + ": expected String[], got "
               + item.type.getValueStr(),
           false);
+      incrementWarningCounter();
       return defaultValue;
     }
   }
@@ -1158,7 +1309,7 @@ public class Telemetry {
     if (!table.entries.containsKey(name)) {
       DriverStation.reportWarning(
           "Telemetry: entry " + name + " does not exist, creating with type byte[]", false);
-      System.out.println("Telemetry: entry " + name + " does not exist, creating with type byte[]");
+      incrementWarningCounter();
       addReadableValue(name, NetworkTableType.kRaw);
     }
 
@@ -1170,6 +1321,7 @@ public class Telemetry {
               + name
               + " [byte[]] is not readable. Create with addReadableValue or subscribe before reading.",
           false);
+      incrementWarningCounter();
       return defaultValue;
     }
 
@@ -1182,6 +1334,7 @@ public class Telemetry {
               + ": expected byte[], got "
               + item.type.getValueStr(),
           false);
+      incrementWarningCounter();
       return defaultValue;
     }
   }
@@ -1194,6 +1347,7 @@ public class Telemetry {
             + defaultValue.getClass().getName()
             + ", expected primitive",
         false);
+    incrementWarningCounter();
     return defaultValue;
   }
 
@@ -1205,6 +1359,7 @@ public class Telemetry {
             + defaultValue.getClass().getName()
             + "[], expected primitive[]",
         false);
+    incrementWarningCounter();
     return defaultValue;
   }
 }

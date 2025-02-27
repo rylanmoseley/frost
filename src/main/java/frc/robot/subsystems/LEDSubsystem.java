@@ -169,7 +169,9 @@ public class LEDSubsystem extends SubsystemBase {
     // This method will be called once per scheduler run
     m_led.setData(m_ledBuffer);
 
-    Telemetry.setValue("LEDs/Pattern", this.getCurrentCommand().getName());
+    Telemetry.setValue(
+        "LEDs/Pattern",
+        this.getCurrentCommand() == null ? "null" : this.getCurrentCommand().getName());
     Telemetry.setValue("LEDs/IsUnderglowEnabled", Power.getSwitchableChannel());
   }
 

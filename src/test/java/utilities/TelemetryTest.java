@@ -1,14 +1,19 @@
+package utilities;
+
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import edu.wpi.first.hal.HAL;
 import edu.wpi.first.networktables.NetworkTableType;
 import frc.robot.utilities.Telemetry;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestInstance.Lifecycle;
 
+@TestInstance(Lifecycle.PER_CLASS)
 class TelemetryTest {
-  @BeforeEach // this method will run before each test
+  @BeforeAll // this method will run before each test
   void setup() {
     assert HAL.initialize(500, 0); // initialize the HAL, crash if failed
   }

@@ -1,3 +1,5 @@
+package utilities;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import edu.wpi.first.hal.HAL;
