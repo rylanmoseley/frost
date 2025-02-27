@@ -50,7 +50,7 @@ public class RobotContainer {
     if (DashboardConstants.DASHBOARD_ENABLED) {
       System.out.println("Starting Dashboard Webserver");
       System.out.println(
-          "Dashboard directory"
+          "Dashboard directory: "
               + Filesystem.getDeployDirectory()
               + "/"
               + DashboardConstants.DASHBOARD_PATH);
@@ -62,7 +62,7 @@ public class RobotContainer {
     if (DashboardConstants.DEPLOY_SERVER_ENABLED) {
       System.out.println("Starting Deploy Webserver");
       System.out.println(
-          "Deploy directory"
+          "Deploy directory: "
               + Filesystem.getDeployDirectory()
               + "/"
               + DashboardConstants.DEPLOY_SERVER_PATH);

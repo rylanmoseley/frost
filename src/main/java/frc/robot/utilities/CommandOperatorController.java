@@ -5,6 +5,7 @@
 package frc.robot.utilities;
 
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.networktables.NetworkTableType;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -19,23 +20,23 @@ public class CommandOperatorController {
     leftBoard = new CommandGenericHID(leftPort);
     rightBoard = new CommandGenericHID(rightPort);
 
-    Telemetry.setValue("buttonBoard/0", false);
-    Telemetry.setValue("buttonBoard/1", false);
-    Telemetry.setValue("buttonBoard/2", false);
-    Telemetry.setValue("buttonBoard/3", false);
-    Telemetry.setValue("buttonBoard/4", false);
-    Telemetry.setValue("buttonBoard/5", false);
-    Telemetry.setValue("buttonBoard/6", false);
-    Telemetry.setValue("buttonBoard/7", false);
-    Telemetry.setValue("buttonBoard/8", false);
+    Telemetry.addValue("buttonBoard/00", NetworkTableType.kBoolean);
+    Telemetry.addValue("buttonBoard/01", NetworkTableType.kBoolean);
+    Telemetry.addValue("buttonBoard/02", NetworkTableType.kBoolean);
+    Telemetry.addValue("buttonBoard/03", NetworkTableType.kBoolean);
+    Telemetry.addValue("buttonBoard/04", NetworkTableType.kBoolean);
+    Telemetry.addValue("buttonBoard/05", NetworkTableType.kBoolean);
+    Telemetry.addValue("buttonBoard/06", NetworkTableType.kBoolean);
+    Telemetry.addValue("buttonBoard/07", NetworkTableType.kBoolean);
+    Telemetry.addValue("buttonBoard/08", NetworkTableType.kBoolean);
     // 9 intentionally skipped
-    Telemetry.setValue("buttonBoard/10", false);
-    Telemetry.setValue("buttonBoard/11", false);
-    Telemetry.setValue("buttonBoard/12", false);
-    Telemetry.setValue("buttonBoard/13", false);
-    Telemetry.setValue("buttonBoard/14", false);
-    Telemetry.setValue("buttonBoard/15", false);
-    Telemetry.setValue("buttonBoard/16", false);
+    Telemetry.addValue("buttonBoard/10", NetworkTableType.kBoolean);
+    Telemetry.addValue("buttonBoard/11", NetworkTableType.kBoolean);
+    Telemetry.addValue("buttonBoard/12", NetworkTableType.kBoolean);
+    Telemetry.addValue("buttonBoard/13", NetworkTableType.kBoolean);
+    Telemetry.addValue("buttonBoard/14", NetworkTableType.kBoolean);
+    Telemetry.addValue("buttonBoard/15", NetworkTableType.kBoolean);
+    Telemetry.addValue("buttonBoard/16", NetworkTableType.kBoolean);
   }
 
   /** Indexes start at 0 */
@@ -44,7 +45,7 @@ public class CommandOperatorController {
       DriverStation.reportError("Button Board: [GET] Invalid LED number: " + LEDNumber, false);
       return false;
     }
-    return Telemetry.getValue("buttonBoard/" + LEDNumber, false);
+    return Telemetry.getValue("buttonBoard/" + (LEDNumber < 9 ? "0" : "") + LEDNumber, false);
   }
 
   /** Indexes start at 0 */
@@ -53,7 +54,7 @@ public class CommandOperatorController {
       DriverStation.reportError("Button Board: [SET] Invalid LED number: " + LEDNumber, false);
       return;
     }
-    Telemetry.setValue("buttonBoard/" + LEDNumber, value);
+    Telemetry.setValue("buttonBoard/" + (LEDNumber < 9 ? "0" : "") + LEDNumber, value);
   }
 
   /** Indexes start at 0 */

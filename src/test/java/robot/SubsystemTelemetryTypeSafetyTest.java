@@ -6,8 +6,12 @@ import edu.wpi.first.hal.HAL;
 import frc.robot.subsystems.Arm.ArmSubsystem;
 import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.Swerve.SwerveSubsystem;
+import frc.robot.utilities.CommandDriverController;
+import frc.robot.utilities.CommandOperatorController;
 import frc.robot.utilities.Pigeon;
 import frc.robot.utilities.Telemetry;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -23,28 +27,41 @@ class SubsystemTelemetryTypeSafetyTest {
   @Test // marks this method as a test
   void pigeonTelemetryTypeSafetyCheck() {
     Pigeon.getRotation();
-
-    assertEquals(0, Telemetry.getValue("diagnostics/telemetry/warningCount", 0));
   }
 
   @Test // marks this method as a test
   void armSubsystemTelemetryTypeSafetyCheck() {
     new ArmSubsystem();
-
-    assertEquals(0, Telemetry.getValue("diagnostics/telemetry/warningCount", 0));
   }
 
   @Test // marks this method as a test
   void swerveSubsystemTelemetryTypeSafetyCheck() {
     new SwerveSubsystem();
-
-    assertEquals(0, Telemetry.getValue("diagnostics/telemetry/warningCount", 0));
   }
 
   @Test // marks this method as a test
   void LEDSubsystemTelemetryTypeSafetyCheck() {
     new LEDSubsystem();
+  }
 
-    assertEquals(0, Telemetry.getValue("diagnostics/telemetry/warningCount", 0));
+  @Test // marks this method as a test
+  void DriverControllerTelemetryTypeSafetyCheck() {
+    new CommandDriverController(0);
+  }
+
+  @Test // marks this method as a test
+  void OperatorControllerTelemetryTypeSafetyCheck() {
+    new CommandOperatorController(1, 2);
+  }
+
+  @AfterEach
+  void checkTelemetry() {
+    // Check if any warnings were logged
+    assertEquals(0, Telemetry.getWarningCount(), 0);
+  }
+
+  @AfterAll
+  void tearDown() {
+    Telemetry.clearWarningCount();
   }
 }

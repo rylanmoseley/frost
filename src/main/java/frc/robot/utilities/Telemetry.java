@@ -74,6 +74,14 @@ public class Telemetry {
         1 + (int) getValue("diagnostics/telemetry/warningCount", 0));
   }
 
+  public static int getWarningCount() {
+    return (int) getValue("diagnostics/telemetry/warningCount", 0);
+  }
+
+  public static void clearWarningCount() {
+    setValue("diagnostics/telemetry/warningCount", 0);
+  }
+
   public static void addValue(String name, NetworkTableType type, PubSubOption... options) {
     Telemetry table = getTelemetry();
     Topic top;

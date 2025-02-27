@@ -6,6 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import edu.wpi.first.hal.HAL;
 import edu.wpi.first.networktables.NetworkTableType;
 import frc.robot.utilities.Telemetry;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -156,5 +158,18 @@ class TelemetryTest {
   @Test
   void getValueWithoutAdding() {
     assertEquals("", Telemetry.getValue("test17", "hello"));
+    assertEquals(0, Telemetry.getWarningCount(), 1);
+    Telemetry.clearWarningCount(); // this one *should* throw a warning, so clear it
+  }
+
+  @AfterEach
+  void checkTelemetry() {
+    // Check if any warnings were logged
+    assertEquals(0, Telemetry.getWarningCount(), 0);
+  }
+
+  @AfterAll
+  void tearDown() {
+    Telemetry.clearWarningCount();
   }
 }
