@@ -54,9 +54,13 @@ public class RobotContainer {
               + Filesystem.getDeployDirectory()
               + "/"
               + DashboardConstants.DASHBOARD_PATH);
-      WebServer.start(
-          DashboardConstants.DASHBOARD_PORT,
-          Filesystem.getDeployDirectory() + "/" + DashboardConstants.DASHBOARD_PATH);
+      try {
+        WebServer.start(
+            DashboardConstants.DASHBOARD_PORT,
+            Filesystem.getDeployDirectory() + "/" + DashboardConstants.DASHBOARD_PATH);
+      } catch (Exception e) {
+        System.out.println("Dashboard Webserver failed to start: " + e.getMessage());
+      }
     }
     // host deploy directory webserver
     if (DashboardConstants.DEPLOY_SERVER_ENABLED) {
@@ -66,9 +70,13 @@ public class RobotContainer {
               + Filesystem.getDeployDirectory()
               + "/"
               + DashboardConstants.DEPLOY_SERVER_PATH);
-      WebServer.start(
-          DashboardConstants.DEPLOY_SERVER_PORT,
-          Filesystem.getDeployDirectory() + "/" + DashboardConstants.DEPLOY_SERVER_PATH);
+      try {
+        WebServer.start(
+            DashboardConstants.DEPLOY_SERVER_PORT,
+            Filesystem.getDeployDirectory() + "/" + DashboardConstants.DEPLOY_SERVER_PATH);
+      } catch (Exception e) {
+        System.out.println("Deploy Webserver failed to start: " + e.getMessage());
+      }
     }
 
     // Configure the trigger bindings

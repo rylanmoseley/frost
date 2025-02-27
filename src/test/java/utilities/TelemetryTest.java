@@ -171,5 +171,6 @@ class TelemetryTest {
   @AfterAll
   void tearDown() {
     Telemetry.clearWarningCount();
+    HAL.shutdown();
   }
 }

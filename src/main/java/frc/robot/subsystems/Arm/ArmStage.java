@@ -69,12 +69,15 @@ public class ArmStage extends SubsystemBase {
 
     Telemetry.addValue("Arm/" + m_name + "/RelativePosition", NetworkTableType.kDouble);
     Telemetry.addValue("Arm/" + m_name + "/AbsolutePosition", NetworkTableType.kDouble);
+    Telemetry.addValue("Arm/" + m_name + "/AbsolutePositionAtMotor", NetworkTableType.kDouble);
+    Telemetry.addValue("Arm/" + m_name + "/AdjustedPosition", NetworkTableType.kDouble);
     Telemetry.addValue("Arm/" + m_name + "/RelativeVelocityRPM", NetworkTableType.kDouble);
     Telemetry.addValue("Arm/" + m_name + "/TargetPosition", NetworkTableType.kDouble);
     Telemetry.addValue("Arm/" + m_name + "/Output", NetworkTableType.kDouble);
     Telemetry.addValue("Arm/" + m_name + "/CurrentDraw", NetworkTableType.kDouble);
     Telemetry.addValue("Arm/" + m_name + "/Temperature", NetworkTableType.kDouble);
-    Telemetry.addValue("Arm/" + m_name + "/HasFault", NetworkTableType.kDouble);
+    Telemetry.addValue("Arm/" + m_name + "/HasFault", NetworkTableType.kBoolean);
+    Telemetry.addValue("Arm/" + m_name + "/HasStickyFault", NetworkTableType.kBoolean);
     Telemetry.addValue("Arm/" + m_name + "/VoltageIn", NetworkTableType.kDouble);
 
     Telemetry.addValue("Arm/" + m_name + "/TotalCurrentDraw", NetworkTableType.kDouble);

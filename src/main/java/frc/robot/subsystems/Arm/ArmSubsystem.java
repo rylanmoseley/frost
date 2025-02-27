@@ -20,10 +20,10 @@ public class ArmSubsystem extends SubsystemBase {
   public final BooleanSupplier isConeMode = () -> currentMode == Mode.CONE;
   public final BooleanSupplier isCubeMode = () -> currentMode == Mode.CUBE;
 
-  private Claw m_claw = new Claw();
-  private ArmStage m_stage1 = new ArmStage("Stage1", ArmStagesConstants.STAGE_1_CONFIG);
-  private ArmStage m_stage2 = new ArmStage("Stage2", ArmStagesConstants.STAGE_2_CONFIG);
-  private ArmStage m_Stage3 = new ArmStage("Stage3", ArmStagesConstants.STAGE_3_CONFIG);
+  private Claw m_claw = null;
+  private ArmStage m_stage1 = null;
+  private ArmStage m_stage2 = null;
+  private ArmStage m_Stage3 = null;
 
   private Mechanism2d mech2d =
       new Mechanism2d(
@@ -65,6 +65,11 @@ public class ArmSubsystem extends SubsystemBase {
               + m_Stage3.totalCurrentDraw.getAsDouble();
 
   public ArmSubsystem() {
+    m_claw = new Claw();
+    m_stage1 = new ArmStage("Stage1", ArmStagesConstants.STAGE_1_CONFIG);
+    m_stage2 = new ArmStage("Stage2", ArmStagesConstants.STAGE_2_CONFIG);
+    m_Stage3 = new ArmStage("Stage3", ArmStagesConstants.STAGE_3_CONFIG);
+
     configureAll();
 
     m_claw.setDefaultCommand(m_claw.idleCommand());
@@ -94,6 +99,10 @@ public class ArmSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+    if (m_claw == null || m_stage1 == null || m_stage2 == null || m_Stage3 == null) {
+      return;
+    }
+
     // TODO straighten out gear ratios
     stage1Ligament.setAngle(
         m_stage1.relativePosition.getAsDouble()

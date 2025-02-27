@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import edu.wpi.first.hal.HAL;
 import edu.wpi.first.wpilibj.simulation.DriverStationSim;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -18,5 +19,10 @@ class EnableTest {
     DriverStationSim.setEnabled(true);
 
     assertEquals(true, DriverStationSim.getEnabled());
+  }
+
+  @AfterAll
+  static void cleanup() {
+    HAL.shutdown();
   }
 }

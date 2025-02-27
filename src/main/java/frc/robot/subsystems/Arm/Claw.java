@@ -164,6 +164,8 @@ public class Claw extends SubsystemBase {
     Telemetry.addValue("Arm/Claw/Roller/RightVoltageIn", NetworkTableType.kDouble);
     Telemetry.addValue("Arm/Claw/Roller/LeftHasFault", NetworkTableType.kBoolean);
     Telemetry.addValue("Arm/Claw/Roller/RightHasFault", NetworkTableType.kBoolean);
+    Telemetry.addValue("Arm/Claw/Roller/LeftHasStickyFault", NetworkTableType.kBoolean);
+    Telemetry.addValue("Arm/Claw/Roller/RightHasStickyFault", NetworkTableType.kBoolean);
     Telemetry.addValue("Arm/Claw/Roller/LeftVelocityRPM", NetworkTableType.kDouble);
     Telemetry.addValue("Arm/Claw/Roller/RightVelocityRPM", NetworkTableType.kDouble);
 

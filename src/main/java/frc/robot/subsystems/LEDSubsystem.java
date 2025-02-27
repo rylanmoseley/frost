@@ -14,8 +14,8 @@ import frc.robot.utilities.Telemetry;
 import java.util.function.DoubleSupplier;
 
 public class LEDSubsystem extends SubsystemBase {
-  private AddressableLED m_led = new AddressableLED(LEDConstants.LED_PORT);
-  private AddressableLEDBuffer m_ledBuffer = new AddressableLEDBuffer(LEDConstants.LED_LENGTH);
+  private AddressableLED m_led = null;
+  private AddressableLEDBuffer m_ledBuffer;
 
   private final LEDPattern initializePattern =
       LEDPattern.gradient(GradientType.kContinuous, Color.kGreen, Color.kBlue)
@@ -51,6 +51,8 @@ public class LEDSubsystem extends SubsystemBase {
           .blink(LEDConstants.SELF_DESTRUCT_BREATHE_TIME);
 
   public LEDSubsystem() {
+    m_led = new AddressableLED(LEDConstants.LED_PORT);
+    m_ledBuffer = new AddressableLEDBuffer(LEDConstants.LED_LENGTH);
     m_led.setLength(m_ledBuffer.getLength());
     m_led.start();
 
@@ -154,12 +156,14 @@ public class LEDSubsystem extends SubsystemBase {
 
   public Runnable enableUnderglow() {
     return () -> {
+      System.out.println("Enabling Underglow");
       Power.enableUnderglow();
     };
   }
 
   public Runnable disableUnderglow() {
     return () -> {
+      System.out.println("Disabling Underglow");
       Power.disableUnderglow();
     };
   }
@@ -167,7 +171,7 @@ public class LEDSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    m_led.setData(m_ledBuffer);
+    if (m_led != null) m_led.setData(m_ledBuffer);
 
     Telemetry.setValue(
         "LEDs/Pattern",

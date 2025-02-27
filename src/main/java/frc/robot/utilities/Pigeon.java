@@ -64,8 +64,8 @@ public class Pigeon extends SubsystemBase {
     Telemetry.addValue("Pigeon/YawVelocity", NetworkTableType.kDouble);
     Telemetry.addValue("Pigeon/Roll", NetworkTableType.kDouble);
     Telemetry.addValue("Pigeon/RollVelocity", NetworkTableType.kDouble);
-    Telemetry.addValue("Pigeon/Faults", NetworkTableType.kDouble);
-    Telemetry.addValue("Pigeon/StickyFaults", NetworkTableType.kDouble);
+    Telemetry.addValue("Pigeon/Faults", NetworkTableType.kInteger);
+    Telemetry.addValue("Pigeon/StickyFaults", NetworkTableType.kInteger);
     Telemetry.addValue("Pigeon/SupplyVoltage", NetworkTableType.kDouble);
     Telemetry.addValue("Pigeon/Temperature", NetworkTableType.kDouble);
   }

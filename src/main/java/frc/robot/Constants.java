@@ -55,7 +55,7 @@ public final class Constants {
     public static final boolean DASHBOARD_ENABLED = true;
     public static final String DASHBOARD_PATH = "dashboard";
     public static final int DASHBOARD_PORT = 5800;
-    public static final boolean DEPLOY_SERVER_ENABLED = false;
+    public static final boolean DEPLOY_SERVER_ENABLED = true;
     public static final String DEPLOY_SERVER_PATH = "";
     public static final int DEPLOY_SERVER_PORT = 5801;
   }
@@ -241,7 +241,7 @@ public final class Constants {
       }
 
       public static class DIO {
-        public static final int BEAM_BREAK = 0;
+        public static final int BEAM_BREAK = 4;
       }
 
       public static final boolean BEAM_BREAK_BROKEN_VALUE = true;

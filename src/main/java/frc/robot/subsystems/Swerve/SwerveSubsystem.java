@@ -71,6 +71,11 @@ public class SwerveSubsystem extends SubsystemBase {
     // Reset the pose estimator
     resetOdometry(new Pose2d());
 
+    if (AutoBuilder.isConfigured()) {
+      System.out.println("AutoBuilder is already configured, skipping configuration.");
+      return;
+    }
+
     AutoBuilder.configure(
         this::getPose,
         this::resetOdometry,
